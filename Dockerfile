@@ -16,7 +16,7 @@ RUN apt-get update -y && \
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     mv kubectl /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl && \
-    wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/linux_amd64" -O /usr/bin/yq && \
+    wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops && \
