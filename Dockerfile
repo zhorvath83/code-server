@@ -1,6 +1,6 @@
 FROM codercom/code-server:4.1.0 AS code-server
 
-ENV CODER_HOME=/home/coder
+ENV CODER_HOME="/home/coder"
 
 # renovate: datasource=github-releases depName=mikefarah/yq
 ENV YQ_VERSION=v4.21.1
