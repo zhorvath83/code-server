@@ -17,7 +17,7 @@ RUN sudo apt-get update -y && \
     sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/linux_amd64" -O /usr/bin/yq && \
     sudo chmod +x /usr/bin/yq && \
     wget -q https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux -O /usr/local/bin/sops && \
-    chmod +x /usr/local/bin/sops
+    sudo chmod +x /usr/local/bin/sops
     sudo mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
     sudo chown -R coder:coder "${CODER_HOME}" && \
     sudo mkdir -p "${CODER_HOME}/.config/mc" && \
