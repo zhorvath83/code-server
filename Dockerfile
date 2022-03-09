@@ -20,10 +20,10 @@ RUN apt-get update -y && \
     chmod +x /usr/bin/yq && \
     wget -q https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops
-    mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
-    chown -R coder:coder "${CODER_HOME}" && \
-    mkdir -p "${CODER_HOME}/.config/mc" && \
-    chown -R coder:coder "${CODER_HOME}/.config/mc" && \
+    mkdir -p /home/coder/.local/share/code-server/extensions && \
+    chown -R coder:coder /home/coder && \
+    mkdir -p /home/coder/.config/mc && \
+    chown -R coder:coder /home/coder/.config/mc && \
     apt remove -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
 
