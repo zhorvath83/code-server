@@ -10,7 +10,7 @@ ENV SOPS_VERSION=v3.7.2
 
 # renovate: depName=golang
 ENV GOLANG_VERSION=1.17.7
-ENV PATH /usr/local/go/bin:$PATH
+ENV GOPATH=/go PATH=/go/bin:/usr/local/go/bin:${PATH}
 
 USER root
 
@@ -36,9 +36,9 @@ RUN apt-get update -y && \
     #mv kubectl /usr/bin/kubectl && \
     #chmod +x /usr/bin/kubectl && \
 
-ENV GOPATH=/go
-ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-ENV CGO_ENABLED=0
+#ENV GOPATH=/go
+#ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+#RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+#ENV CGO_ENABLED=0
 
 USER coder
