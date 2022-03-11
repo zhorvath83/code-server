@@ -11,7 +11,7 @@ ENV SOPS_VERSION=v3.7.2
 USER root
 
 RUN apt-get update -y && \
-    apt-get install -y net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates wget gnupg unzip && \
+    apt-get install -y net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates wget gnupg unzip golang && \
     pip3 install --upgrade pip && \
     pip install pre-commit && \
     #curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
