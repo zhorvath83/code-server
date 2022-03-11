@@ -10,6 +10,7 @@ ENV SOPS_VERSION=v3.7.2
 
 # renovate: depName=golang
 ENV GOLANG_VERSION=1.17.7
+ENV PATH /usr/local/go/bin:$PATH
 
 USER root
 
@@ -25,7 +26,6 @@ RUN apt-get update -y && \
     wget -q -O go.tgz "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
-    export PATH="/usr/local/go/bin:$PATH"  && \
     apt remove -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     #mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
