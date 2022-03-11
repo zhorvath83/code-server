@@ -3,10 +3,10 @@ FROM codercom/code-server:4.1.0 AS code-server
 ENV CODER_HOME="/home/coder"
 
 # renovate: datasource=github-releases depName=mikefarah/yq
-ENV YQ_VERSION=v4.21.1
+ENV YQ_VERSION=v4.22.1
 
 # renovate: datasource=github-releases depName=mozilla/sops
-ENV SOPS_VERSION=v3.7.1
+ENV SOPS_VERSION=v3.7.2
 
 USER root
 
@@ -14,7 +14,6 @@ RUN apt-get update -y && \
     apt-get install -y net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates wget gnupg unzip && \
     pip3 install --upgrade pip && \
     pip install pre-commit && \
-    pre-commit install && \
     #curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     #mv kubectl /usr/bin/kubectl && \
     #chmod +x /usr/bin/kubectl && \
