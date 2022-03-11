@@ -13,6 +13,8 @@ USER root
 RUN apt-get update -y && \
     apt-get install -y net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates wget gnupg unzip && \
     pip3 install --upgrade pip && \
+    pip install pre-commit && \
+    pre-commit install && \
     #curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     #mv kubectl /usr/bin/kubectl && \
     #chmod +x /usr/bin/kubectl && \
