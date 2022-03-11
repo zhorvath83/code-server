@@ -25,7 +25,7 @@ RUN apt-get update -y && \
     wget -q -O go.tgz "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
     apt remove -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     #mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
