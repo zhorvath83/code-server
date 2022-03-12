@@ -36,9 +36,4 @@ RUN apt-get update -y && \
     #mv kubectl /usr/bin/kubectl && \
     #chmod +x /usr/bin/kubectl && \
 
-#ENV GOPATH=/go
-#ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-#RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
-#ENV CGO_ENABLED=0
-
 USER coder
