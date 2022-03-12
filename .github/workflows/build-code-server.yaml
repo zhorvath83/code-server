@@ -33,7 +33,7 @@ jobs:
         with:
           images: docker.io/codercom/code-server
           tags: |
-            type=semver,pattern={{version}}
+            type=match,pattern=\d.\d.\d
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -63,7 +63,8 @@ jobs:
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}'
+          #image-ref: '${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}'
+          image-ref: '${{ env.IMAGE }}:${{ steps.meta.outputs.tags }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
