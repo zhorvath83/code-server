@@ -25,16 +25,6 @@ jobs:
             vnsuffix=${{ github.run_number }}
             echo "::set-output name=BUILD_ID::${vnprefix}.${vnsuffix}"
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
-      - name: Extract code-server Docker metadata
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: docker.io/codercom/code-server
-          tags: |
-            type=match,pattern=\d.\d.\d
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
@@ -55,16 +45,14 @@ jobs:
           context: ./
           push: true
           platforms: linux/amd64
-          #tags: ${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}
-          tags: ${{ env.IMAGE }}:${{ steps.meta.outputs.tags }}
+          tags: ${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}
           cache-from: type=registry,ref=${{ env.IMAGE }}:build-cache
           cache-to: type=registry,ref=${{ env.IMAGE }}:build-cache,mode=max
 
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          #image-ref: '${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}'
-          image-ref: '${{ env.IMAGE }}:${{ steps.meta.outputs.tags }}'
+          image-ref: '${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'

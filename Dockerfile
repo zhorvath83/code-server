@@ -8,7 +8,7 @@ ENV YQ_VERSION=v4.22.1
 # renovate: datasource=github-releases depName=mozilla/sops
 ENV SOPS_VERSION=v3.7.2
 
-# renovate: depName=golang
+# renovate: datasource=golang-version depName=golang
 ENV GOLANG_VERSION=1.17.7
 
 USER root
