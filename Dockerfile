@@ -9,7 +9,7 @@ ENV YQ_VERSION=v4.22.1
 ENV SOPS_VERSION=v3.7.2
 
 # renovate: datasource=golang-version depName=golang
-ENV GOLANG_VERSION=1.17.7
+ENV GOLANG_VERSION=1.17.8
 
 USER root
 
