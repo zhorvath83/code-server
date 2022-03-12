@@ -31,7 +31,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: codercom/code-server
+          images: docker.io/codercom/code-server
+          tags: |
+            type=semver,pattern={{version}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
