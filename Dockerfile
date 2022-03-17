@@ -25,14 +25,14 @@ RUN apt-get update -y && \
     echo 'Installing SOPS' && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops && \
-    echo 'SOPS version: "$(sops --version)"' && \
     echo 'Installing Golang' && \
-    wget -q -O go.tgz "https://golang.org/dl/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz" && \
+    GOLANG_LATEST_VERSION=$(curl https://golang.org/VERSION?m=text)
+    wget -q -O go.tgz "https://golang.org/dl/$GOLANG_LATEST_VERSION.linux-amd64.tar.gz" && \
     #wget -q -O go.tgz "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
-    echo 'GO version: "$(go version)"' && \
+    go version && \
     apt remove -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     #mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
