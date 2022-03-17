@@ -25,6 +25,8 @@ RUN apt-get update -y && \
     echo 'Installing SOPS' && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops && \
+    echo 'SOPS version:' && \
+    sops --version && \
     echo 'Installing golang' && \
     wget -q -O go.tgz "https://golang.org/dl/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz" && \
     #wget -q -O go.tgz "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
