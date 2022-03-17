@@ -14,7 +14,7 @@ ENV GOLANG_VERSION=1.18.0
 USER root
 
 RUN apt-get update -y && \
-    apt-get install -y net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates wget gnupg unzip bzr && \
+    apt-get install -y --no-install-recommends net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates wget gnupg unzip bzr && \
     apt-get clean && \
     pip3 install --upgrade pip && \
     echo 'Installing pre-commit' && \
@@ -25,16 +25,14 @@ RUN apt-get update -y && \
     echo 'Installing SOPS' && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops && \
-    echo 'SOPS version:' && \
-    sops --version && \
-    echo 'Installing golang' && \
+    echo 'SOPS version: $(sops --version)' && \
+    echo 'Installing Golang' && \
     wget -q -O go.tgz "https://golang.org/dl/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz" && \
     #wget -q -O go.tgz "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
-    echo 'GO version:' && \
-    go version && \
+    echo 'GO version: $(go version)' && \
     apt remove -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     #mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
