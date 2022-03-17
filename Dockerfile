@@ -22,7 +22,7 @@ RUN apt-get update -y && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops && \
-    wget -q -O go.tgz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz"
+    wget -q -O go.tgz "https://dl.google.com/go/$(curl https://golang.org/VERSION?m=text).linux-amd64.tar.gz" && \
     #wget -q -O go.tgz "https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
