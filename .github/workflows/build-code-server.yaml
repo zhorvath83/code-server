@@ -25,6 +25,12 @@ jobs:
             vnsuffix=${{ github.run_number }}
             echo "::set-output name=BUILD_ID::${vnprefix}.${vnsuffix}"
 
+      - name: Get version
+        id: vars
+        run: echo ::set-output name=version::$(grep "CODE_SERVER_VERSION" Dockerfile | cut -d'=' -f 2)
+      - name: Test output
+        run: echo ${{ steps.vars.outputs.version }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
