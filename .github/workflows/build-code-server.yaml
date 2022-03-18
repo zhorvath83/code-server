@@ -27,7 +27,7 @@ jobs:
 
       - name: Get version
         id: vars
-        run: echo ::set-output name=version::$(grep "CODE_SERVER_VERSION" Dockerfile | cut -d'=' -f 2)
+        run: echo ::set-output name=version::$(grep "codercom/code-server" Dockerfile | cut -d':' -f 2)
       - name: Test output
         run: echo ${{ steps.vars.outputs.version }}
 

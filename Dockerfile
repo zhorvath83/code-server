@@ -1,7 +1,4 @@
-# renovate: datasource=docker depName=codercom/code-server
-ENV CODE_SERVER_VERSION=4.1.0
-
-FROM "codercom/code-server:${CODE_SERVER_VERSION}" AS code-server
+FROM codercom/code-server:4.1.0 AS code-server
 
 ENV CODER_HOME="/home/coder"
 
