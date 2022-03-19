@@ -55,8 +55,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          format: 'sarif'
           output: 'trivy-results.sarif'
           ignore-unfixed: true
           severity: 'CRITICAL'
