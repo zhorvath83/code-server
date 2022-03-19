@@ -21,24 +21,9 @@ jobs:
       - name: Determine new image Tag
         id: generate_tag
         run: |
-            vnprefix=1.0
+            vnprefix=$(grep "codercom/code-server" Dockerfile | cut -d':' -f 2 | cut -d' ' -f 1 )
             vnsuffix=${{ github.run_number }}
             echo "::set-output name=BUILD_ID::${vnprefix}.${vnsuffix}"
-
-      - name: Get version
-        id: vars
-        run: |
-            echo ::set-output name=version::$(grep "codercom/code-server" Dockerfile | cut -d':' -f 2 | cut -d' ' -f 1 )
-            echo ::set-output name=major::$(grep "codercom/code-server" Dockerfile | cut -d':' -f 2 | cut -d' ' -f 1 | cut -d'.' -f 1 )
-            echo ::set-output name=minor::$(grep "codercom/code-server" Dockerfile | cut -d':' -f 2 | cut -d' ' -f 1 | cut -d'.' -f 2 )
-            echo ::set-output name=patch::$(($(grep "codercom/code-server" Dockerfile | cut -d':' -f 2 | cut -d' ' -f 1 | cut -d'.' -f 3 ) + 100))
-
-      - name: Test output
-        run: |
-            echo ${{ steps.vars.outputs.version }}
-            echo ${{ steps.vars.outputs.major }}
-            echo ${{ steps.vars.outputs.minor }}
-            echo ${{ steps.vars.outputs.patch }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
