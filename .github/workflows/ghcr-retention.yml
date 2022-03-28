@@ -1,0 +1,30 @@
+name: ghcr-retention
+
+on:
+  schedule:
+    - cron: '0 0 1 * *' # At 00:00 on day-of-month 1.
+
+jobs:
+  cleanup-ghcr:
+    name: Delete old container images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump github context
+        run:   echo "$GITHUB_CONTEXT"
+        shell: bash
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+      - name: Determine image name
+        id: image_name
+        run: |
+            shortreponame=$( echo ${{ github.repository }} | cut -d'/' -f 2 )
+            echo "::set-output name=IMAGENAME::${shortreponame}"
+      - name: Prune old GHCR images
+        uses: sondrelg/container-retention-policy@v1
+        with:
+          image-names: ${{ steps.image_name.outputs.IMAGENAME  }}
+          cut-off: 8 weeks ago UTC
+          timestamp-to-use: updated_at
+          keep-at-least: 2
+          account-type: personal
+          token: ${{ secrets.PAT_4_PRUNE_GHCR }}
