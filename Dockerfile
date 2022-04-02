@@ -17,7 +17,7 @@ RUN apt-get update -y && \
     apt-get install -y --no-install-recommends net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates unzip bzr && \
     apt-get clean && \
     pip3 install --upgrade pip && \
-    pip install pre-commit && \
+    pip install pre-commit pre-commit-hooks yamllint && \
     wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
