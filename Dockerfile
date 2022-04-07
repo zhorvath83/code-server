@@ -32,7 +32,7 @@ RUN apt-get update -y && \
     rm go.tgz && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
     ## go-task
-    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d && \
     apt remove -y --auto-remove software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     #mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
