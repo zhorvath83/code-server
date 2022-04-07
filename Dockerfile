@@ -17,16 +17,22 @@ RUN apt-get update -y && \
     apt-get update -y && \
     apt-get install -y --no-install-recommends terraform && \
     apt-get clean && \
+    ## pip
     pip3 install --upgrade pip && \
+    ## pre-commit, pre-commit-hooks, yamllint, ansible-core
     pip install pre-commit pre-commit-hooks yamllint ansible-core && \
+    ## SOPS
     wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops && \
+    ## Golang
     wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
+    ## go-task
+    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
     apt remove -y --auto-remove software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     #mkdir -p "${CODER_HOME}/.local/share/code-server/extensions" && \
