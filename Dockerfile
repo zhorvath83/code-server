@@ -10,10 +10,12 @@ ENV SOPS_VERSION=v3.7.2
 
 USER root
 
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates unzip bzr curl && \
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
     apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"  && \
     apt-get update -y && \
-    apt-get install -y --no-install-recommends net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip mc ca-certificates unzip bzr curl terraform && \
+    apt-get install -y --no-install-recommends terraform && \
     apt-get clean && \
     pip3 install --upgrade pip && \
     pip install pre-commit pre-commit-hooks yamllint ansible-core && \
