@@ -23,6 +23,7 @@ RUN apt-get update -y && \
     apt-get clean && \
     ## Prettier
     npm install --save-dev --save-exact prettier && \
+    npm install --global prettier && \
     ## pip
     pip3 install --upgrade pip && \
     ## pre-commit, pre-commit-hooks, yamllint, ansible-core
