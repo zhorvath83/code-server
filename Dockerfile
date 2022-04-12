@@ -1,4 +1,4 @@
-FROM codercom/code-server:4.1.0 AS code-server
+FROM codercom/code-server:4.2.0 AS code-server
 
 ENV CODER_HOME="/home/coder"
 
