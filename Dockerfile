@@ -3,7 +3,7 @@ FROM codercom/code-server:4.3.0 AS code-server
 ENV CODER_HOME="/home/coder"
 
 # renovate: datasource=github-releases depName=mikefarah/yq
-ENV YQ_VERSION=v4.24.5
+ENV YQ_VERSION=v4.25.1
 
 # renovate: datasource=github-releases depName=mozilla/sops
 ENV SOPS_VERSION=v3.7.2
