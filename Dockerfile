@@ -6,7 +6,7 @@ ENV CODER_HOME="/home/coder"
 ENV YQ_VERSION=v4.25.1
 
 # renovate: datasource=github-releases depName=mozilla/sops
-ENV SOPS_VERSION=v3.7.2
+ENV SOPS_VERSION=v3.7.3
 
 USER root
 
