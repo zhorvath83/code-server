@@ -8,6 +8,10 @@ ENV YQ_VERSION=v4.27.2
 # renovate: datasource=github-releases depName=mozilla/sops
 ENV SOPS_VERSION=v3.7.3
 
+# code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
+# https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
+ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery"}'
+
 USER root
 
 RUN apt-get update -y && \
