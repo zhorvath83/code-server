@@ -15,7 +15,26 @@ ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_ap
 USER root
 
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends net-tools iputils-ping wget vim jq gnupg software-properties-common python3 python3-pip build-essential python3-dev mc ca-certificates unzip bzr curl git-extras && \
+    apt-get install --assume-yes --no-install-recommends \
+        net-tools \
+        iputils-ping \
+        wget \
+        vim \
+        jq \
+        gnupg \
+        software-properties-common \
+        python3 \
+        python3-pip \
+        build-essential \
+        python3-dev \
+        mc \
+        ca-certificates \
+        unzip \
+        bzr \
+        curl \
+        git-extras \
+        # For generating htpasswd
+        apache2-utils && \
     ## Homebrew
     # NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
     # echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /root/.profile && \
