@@ -48,7 +48,8 @@ RUN sudo apt-get update -y && \
 	#	sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 	## Adding the official HashiCorp repository
 
-## Adding Hashicorp repo
+## Adding Hashicorp and Node.js repo
+## Installing Terraform and npm (for Prettier)
 RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
     # Listing signing key
@@ -56,38 +57,23 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     echo "deb [signed-by=$KEYRING] \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     sudo tee /etc/apt/sources.list.d/hashicorp.list && \
-    sudo apt-get update -y
-
-## Installing Node.js for Prettier
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh
-RUN export NVM_DIR="$HOME/.nvm"
-RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-RUN [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-RUN source .bashrc
-RUN echo $NVM_DIR
-RUN . ${CODER_HOME}/install_nvm.sh
-RUN rm -rf ${CODER_HOME}/install_nvm.sh
-RUN source ~/.nvm/nvm.sh
-RUN nvm install $NODEJS_VERSION
-RUN nvm alias default $NODEJS_VERSION
-RUN nvm use default
-RUN node -v
-RUN npm -v
-
-
-## Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
-RUN sudo apt-get install -y --no-install-recommends terraform && \
+    ## Node.js repo
+    curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - &&\
+    ## Terraform and nodejs
+    sudo apt-get update -y &&\
+    sudo apt-get install -y --no-install-recommends terraform nodejs && \
     sudo apt-get clean
 
-## Prettier
+## Installing Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
 RUN npm install --save-dev --save-exact prettier && \
     ##npm install --global prettier && \
     ## pip
     pip3 install --upgrade pip && \
-    ## Installing pre-commit, pre-commit-hooks, yamllint, ansible-core
+    ## Installing pre-commit, pre-commit-hooks, yamllint, ansible-core && \
     pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
 
-    ## SOPS for encrypting secrets
+
+## Installing SOPS for encrypting secrets
 RUN wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
@@ -102,7 +88,6 @@ RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).l
     sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
     sudo apt remove -y --auto-remove software-properties-common && \
     rm -rf /var/lib/apt/lists/*
-
 
 # Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
