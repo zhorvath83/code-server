@@ -50,6 +50,9 @@ jobs:
           tags: ${{ env.IMAGE }}:${{ steps.generate_tag.outputs.BUILD_ID }}
           cache-from: type=registry,ref=${{ env.IMAGE }}:build-cache
           cache-to: type=registry,ref=${{ env.IMAGE }}:build-cache,mode=max
+          secrets: |
+              "USERNAME=${{ secrets.USERNAME }}"
+              "MAILADDRESS=${{ secrets.MAILADDRESS }}"
 
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
