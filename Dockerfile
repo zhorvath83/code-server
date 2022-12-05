@@ -46,13 +46,13 @@ RUN sudo apt-get update -y && \
 	#	gpg --dearmor | \
 	#	sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 	## Adding the official HashiCorp repository
-	KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg
-	curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
-		# Listing signing key
-	gpg --no-default-keyring --keyring "$KEYRING" --list-keys
+	KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
+	curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
+	# Listing signing key
+	gpg --no-default-keyring --keyring "$KEYRING" --list-keys  && \
 	echo "deb [signed-by=$KEYRING] \
 		https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-		sudo tee /etc/apt/sources.list.d/hashicorp.list
+		sudo tee /etc/apt/sources.list.d/hashicorp.list  && \
     ## Installing Node.js for Prettier
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh \
 		&& . ${CODER_HOME}/install_nvm.sh \
