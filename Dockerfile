@@ -78,6 +78,7 @@ RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).l
     sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
     # When .bashrc or .zshrc has been modified, the change is not applied immediately. 
     source ~/.bashrc && \
+    source ~/.profile && \
     # Updating all packages in GOPATH
     go get -u all && \
     go mod tidy
