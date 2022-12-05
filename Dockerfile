@@ -1,5 +1,11 @@
 FROM codercom/code-server:4.8.2 AS code-server
 
+# https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
+RUN --mount=type=secret,id=USERNAME \
+  --mount=type=secret,id=MAILADDRESS \
+   export GIT_USERNAME=$(cat /run/secrets/USERNAME) && \
+   export GIT_MAILADDRESS=$(cat /run/secrets/MAILADDRESS)
+
 SHELL ["/bin/bash", "-c"]
 
 USER coder
@@ -38,14 +44,8 @@ RUN sudo apt-get update -y && \
         # For generating htpasswd
         apache2-utils
 
-    ## Download the signing key to a new keyring for HashiCorp Terraform
-	# wget -O- https://apt.releases.hashicorp.com/gpg | \
-	#	gpg --dearmor | \
-	#	sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-	## Adding the official HashiCorp repository
-
-## Adding Hashicorp and Node.js repo
-## Installing Terraform and npm (for Prettier)
+# Adding Hashicorp and Node.js repo
+# Installing Terraform and npm (for Prettier)
 RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
     # Listing signing key
@@ -60,7 +60,7 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     sudo apt-get install -y --no-install-recommends terraform nodejs && \
     sudo apt-get clean
 
-## Installing Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
+# Installing Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
 RUN sudo npm install --save-dev --save-exact prettier && \
     ##npm install --global prettier && \
     ## pip
@@ -69,13 +69,13 @@ RUN sudo npm install --save-dev --save-exact prettier && \
     sudo pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
 
 
-## Installing SOPS for encrypting secrets
+# Installing SOPS for encrypting secrets
 RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     sudo chmod +x /usr/bin/yq && \
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     sudo chmod +x /usr/local/bin/sops
 
-## Golang for Go-Task
+# Golang for Go-Task
 RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
     sudo tar -C /usr/local -xzf go.tgz && \
     sudo rm go.tgz && \
@@ -96,7 +96,7 @@ RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/inst
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
 	sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc 
 
- # default bash
+# default bash
 RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
 	sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
@@ -104,8 +104,8 @@ RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
 RUN GITUSER=${{ secrets.USERNAME }} && \
 	GITMAIL=${{ secrets.MAILADDRESS }} && \
 	git config --global --add pull.rebase false && \
-	git config --global --add user.name ${GITUSER} && \
-	git config --global --add user.email ${GITMAIL} && \
+	git config --global --add user.name ${GIT_USERNAME} && \
+	git config --global --add user.email ${GIT_MAILADDRESS} && \
 	git config --global core.editor vim && \
 	git config --global init.defaultBranch master && \
 	git config --global alias.pullall '!git pull && git submodule update --init --recursive'
