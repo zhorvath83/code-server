@@ -61,12 +61,12 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     sudo apt-get clean
 
 ## Installing Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
-RUN npm install --save-dev --save-exact prettier && \
+RUN sudo npm install --save-dev --save-exact prettier && \
     ##npm install --global prettier && \
     ## pip
-    pip3 install --upgrade pip && \
+    sudo pip3 install --upgrade pip && \
     ## Installing pre-commit, pre-commit-hooks, yamllint, ansible-core && \
-    pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
+    sudo pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
 
 
 ## Installing SOPS for encrypting secrets
@@ -77,18 +77,16 @@ RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION
 
 ## Golang for Go-Task
 RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
-    tar -C /usr/local -xzf go.tgz && \
-    rm go.tgz && \
-    echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
+    sudo tar -C /usr/local -xzf go.tgz && \
+    sudo rm go.tgz && \
+    sudo echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
     ## go-task
-    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
-    sudo apt remove -y --auto-remove software-properties-common && \
-    rm -rf /var/lib/apt/lists/*
+    sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
 # Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
-    mv kubectl /usr/bin/kubectl && \
-    chmod +x /usr/bin/kubectl
+    sudo mv kubectl /usr/bin/kubectl && \
+    sudo chmod +x /usr/bin/kubectl
 
 # zsh
 RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh && \
@@ -123,6 +121,10 @@ RUN HOME=${CODER_HOME} code-server \
     	--install-extension esbenp.prettier-vscode \
     	--install-extension signageos.signageos-vscode-sops \
     	--install-extension MichaelCurrin.auto-commit-msg
+
+# Cleanup
+RUN sudo sudo apt remove -y --auto-remove software-properties-common && \
+    sudo rm -rf /var/lib/apt/lists/*
 
 COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 
