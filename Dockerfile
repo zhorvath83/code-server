@@ -48,6 +48,7 @@ RUN sudo apt-get update -y && \
 	#	sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 	## Adding the official HashiCorp repository
 
+## Node.js
 RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
     # Listing signing key
@@ -65,11 +66,12 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     nvm use default && \
     sudo apt-get update -y
 
-    ## Terraform, Node.js
+## Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
 RUN sudo apt-get install -y --no-install-recommends terraform && \
-    sudo apt-get clean && \
-    ## Prettier
-    npm install --save-dev --save-exact prettier && \
+    sudo apt-get clean
+
+## Prettier
+RUN npm install --save-dev --save-exact prettier && \
     npm install --global prettier && \
     ## pip
     pip3 install --upgrade pip && \
@@ -79,9 +81,10 @@ RUN sudo apt-get install -y --no-install-recommends terraform && \
     wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
-    chmod +x /usr/local/bin/sops && \
-    ## Golang for Go-Task
-    wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
+    chmod +x /usr/local/bin/sops
+
+## Golang for Go-Task
+RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
     tar -C /usr/local -xzf go.tgz && \
     rm go.tgz && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
@@ -91,7 +94,7 @@ RUN sudo apt-get install -y --no-install-recommends terraform && \
     rm -rf /var/lib/apt/lists/*
 
 
-#Kubectl
+# Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     mv kubectl /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl
