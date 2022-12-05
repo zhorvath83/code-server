@@ -64,6 +64,9 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     nvm install $NODEJS_VERSION && \
     nvm alias default $NODEJS_VERSION && \
     nvm use default && \
+    nvm on && \
+    node -v && \
+    npm -v && \
     sudo apt-get update -y
 
 ## Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
