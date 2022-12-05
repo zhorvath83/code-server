@@ -79,7 +79,7 @@ RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION
 RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
     sudo tar -C /usr/local -xzf go.tgz && \
     sudo rm go.tgz && \
-    sudo echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/profile && \
+    echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee --append /etc/profile >/dev/null && \
     ## go-task
     sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
