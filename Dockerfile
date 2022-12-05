@@ -48,16 +48,18 @@ RUN sudo apt-get update -y && \
 	#	sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 	## Adding the official HashiCorp repository
 
-## Node.js
+## Adding Hashicorp repo
 RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
     # Listing signing key
-    gpg --no-default-keyring --keyring "$KEYRING" --list-keys  && \
+    gpg --no-default-keyring --keyring "$KEYRING" --list-keys && \
     echo "deb [signed-by=$KEYRING] \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     sudo tee /etc/apt/sources.list.d/hashicorp.list && \
-    ## Installing Node.js for Prettier
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
+    sudo apt-get update -y
+
+## Installing Node.js for Prettier
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
     export NVM_DIR="$HOME/.nvm" && \
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
@@ -71,7 +73,7 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     nvm use default && \
     node -v && \
     npm -v && \
-    sudo apt-get update -y
+
 
 ## Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
 RUN sudo apt-get install -y --no-install-recommends terraform && \
