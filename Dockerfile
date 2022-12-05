@@ -40,30 +40,33 @@ RUN sudo apt-get update -y && \
         curl \
         git-extras \
         # For generating htpasswd
-        apache2-utils && \
+        apache2-utils
+
     ## Download the signing key to a new keyring for HashiCorp Terraform
 	# wget -O- https://apt.releases.hashicorp.com/gpg | \
 	#	gpg --dearmor | \
 	#	sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 	## Adding the official HashiCorp repository
-	KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
-	curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
-	# Listing signing key
-	gpg --no-default-keyring --keyring "$KEYRING" --list-keys  && \
-	echo "deb [signed-by=$KEYRING] \
-		https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-		sudo tee /etc/apt/sources.list.d/hashicorp.list && \
+
+RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
+    # Listing signing key
+    gpg --no-default-keyring --keyring "$KEYRING" --list-keys  && \
+    echo "deb [signed-by=$KEYRING] \
+    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    sudo tee /etc/apt/sources.list.d/hashicorp.list && \
     ## Installing Node.js for Prettier
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
-	. ${CODER_HOME}/install_nvm.sh && \
-	rm -rf ${CODER_HOME}/install_nvm.sh && \
-	source ~/.nvm/nvm.sh && \
-	nvm install $NODEJS_VERSION && \
-	nvm alias default $NODEJS_VERSION && \
-	nvm use default && \
-    sudo apt-get update -y && \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
+    . ${CODER_HOME}/install_nvm.sh && \
+    rm -rf ${CODER_HOME}/install_nvm.sh && \
+    source ~/.nvm/nvm.sh && \
+    nvm install $NODEJS_VERSION && \
+    nvm alias default $NODEJS_VERSION && \
+    nvm use default && \
+    sudo apt-get update -y
+
     ## Terraform, Node.js
-    sudo apt-get install -y --no-install-recommends terraform nodejs && \
+RUN sudo apt-get install -y --no-install-recommends terraform && \
     sudo apt-get clean && \
     ## Prettier
     npm install --save-dev --save-exact prettier && \
@@ -119,11 +122,11 @@ RUN HOME=${CODER_HOME} code-server \
 	--install-extension equinusocio.vsc-material-theme \
 	--install-extension PKief.material-icon-theme \
 	--install-extension vscode-icons-team.vscode-icons \
-    --install-extension Rubymaniac.vscode-paste-and-indent \
-    --install-extension redhat.vscode-yaml \
-    --install-extension esbenp.prettier-vscode \
-    --install-extension signageos.signageos-vscode-sops \
-    --install-extension MichaelCurrin.auto-commit-msg
+    	--install-extension Rubymaniac.vscode-paste-and-indent \
+    	--install-extension redhat.vscode-yaml \
+    	--install-extension esbenp.prettier-vscode \
+    	--install-extension signageos.signageos-vscode-sops \
+    	--install-extension MichaelCurrin.auto-commit-msg
 
 COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 
