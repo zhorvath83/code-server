@@ -9,7 +9,9 @@ USER coder
 RUN --mount=type=secret,id=USERNAME \
     --mount=type=secret,id=MAILADDRESS \
     export GIT_USERNAME=$(sudo cat /run/secrets/USERNAME) && \
-    export GIT_MAILADDRESS=$(sudo cat /run/secrets/MAILADDRESS)
+    export GIT_MAILADDRESS=$(sudo cat /run/secrets/MAILADDRESS) && \
+    echo $GIT_USERNAME && \
+    echo $GIT_MAILADDRESS
 
 ENV CODER_HOME="/home/coder"
 
@@ -103,8 +105,8 @@ RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
 
 # git config
 RUN git config --global --add pull.rebase false && \
-    git config --global --add user.name ${GIT_USERNAME} && \
-    git config --global --add user.email ${GIT_MAILADDRESS} && \
+    git config --global --add user.name $GIT_USERNAME && \
+    git config --global --add user.email $GIT_MAILADDRESS && \
     git config --global core.editor vim && \
     git config --global init.defaultBranch master && \
     git config --global alias.pullall '!git pull && git submodule update --init --recursive'
