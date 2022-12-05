@@ -85,7 +85,7 @@ RUN sudo apt-get update -y && \
     ## go-task
     sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
     sudo apt remove -y --auto-remove software-properties-common && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
 	#Kubectl
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     mv kubectl /usr/bin/kubectl && \
