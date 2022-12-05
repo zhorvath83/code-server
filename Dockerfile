@@ -1,14 +1,15 @@
 FROM codercom/code-server:4.8.2 AS code-server
 
-# https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
-RUN --mount=type=secret,id=USERNAME \
-  --mount=type=secret,id=MAILADDRESS \
-   export GIT_USERNAME=$(cat /run/secrets/USERNAME) && \
-   export GIT_MAILADDRESS=$(cat /run/secrets/MAILADDRESS)
-
 SHELL ["/bin/bash", "-c"]
 
 USER coder
+
+
+# https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
+RUN --mount=type=secret,id=USERNAME \
+    --mount=type=secret,id=MAILADDRESS \
+    export GIT_USERNAME=$(sudo cat /run/secrets/USERNAME) && \
+    export GIT_MAILADDRESS=$(sudo cat /run/secrets/MAILADDRESS)
 
 ENV CODER_HOME="/home/coder"
 
