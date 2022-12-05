@@ -101,14 +101,12 @@ RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
 	sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 # git config
-RUN GITUSER=${{ secrets.USERNAME }} && \
-	GITMAIL=${{ secrets.MAILADDRESS }} && \
-	git config --global --add pull.rebase false && \
-	git config --global --add user.name ${GIT_USERNAME} && \
-	git config --global --add user.email ${GIT_MAILADDRESS} && \
-	git config --global core.editor vim && \
-	git config --global init.defaultBranch master && \
-	git config --global alias.pullall '!git pull && git submodule update --init --recursive'
+RUN git config --global --add pull.rebase false && \
+    git config --global --add user.name ${GIT_USERNAME} && \
+    git config --global --add user.email ${GIT_MAILADDRESS} && \
+    git config --global core.editor vim && \
+    git config --global init.defaultBranch master && \
+    git config --global alias.pullall '!git pull && git submodule update --init --recursive'
 
 # vscode plugin
 RUN HOME=${CODER_HOME} code-server \
