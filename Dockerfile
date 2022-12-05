@@ -47,9 +47,9 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     echo "deb [signed-by=$KEYRING] \
     https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
     sudo tee /etc/apt/sources.list.d/hashicorp.list && \
-    ## Node.js repo
+    # Node.js repo
     curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - &&\
-    ## Terraform and nodejs
+    # Terraform and nodejs
     sudo apt-get update -y &&\
     sudo apt-get install -y --no-install-recommends terraform nodejs && \
     sudo apt-get clean
@@ -57,9 +57,9 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
 # Installing Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
 RUN sudo npm install --save-dev --save-exact prettier && \
     ##npm install --global prettier && \
-    ## pip
+    # pip
     sudo pip3 install --upgrade pip && \
-    ## Installing pre-commit, pre-commit-hooks, yamllint, ansible-core && \
+    # Installing pre-commit, pre-commit-hooks, yamllint, ansible-core && \
     sudo pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
 
 
@@ -74,8 +74,10 @@ RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).l
     sudo tar -C /usr/local -xzf go.tgz && \
     sudo rm go.tgz && \
     echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee --append /etc/profile >/dev/null && \
-    ## go-task
-    sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+    # go-task
+    sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
+    # Updating all packages in GOPATH
+    go get -u all
 
 # Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
