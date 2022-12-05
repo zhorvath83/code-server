@@ -58,13 +58,17 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     sudo tee /etc/apt/sources.list.d/hashicorp.list && \
     ## Installing Node.js for Prettier
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
+    export NVM_DIR="$HOME/.nvm" && \
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
+    source .bashrc && \
+    echo $NVM_DIR  && \
     . ${CODER_HOME}/install_nvm.sh && \
     rm -rf ${CODER_HOME}/install_nvm.sh && \
     source ~/.nvm/nvm.sh && \
     nvm install $NODEJS_VERSION && \
     nvm alias default $NODEJS_VERSION && \
     nvm use default && \
-    nvm on && \
     node -v && \
     npm -v && \
     sudo apt-get update -y
