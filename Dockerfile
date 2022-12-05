@@ -72,13 +72,14 @@ RUN sudo apt-get install -y --no-install-recommends terraform && \
 
 ## Prettier
 RUN npm install --save-dev --save-exact prettier && \
-    npm install --global prettier && \
+    ##npm install --global prettier && \
     ## pip
     pip3 install --upgrade pip && \
     ## Installing pre-commit, pre-commit-hooks, yamllint, ansible-core
-    pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core && \
+    pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
+
     ## SOPS for encrypting secrets
-    wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
+RUN wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     chmod +x /usr/bin/yq && \
     wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     chmod +x /usr/local/bin/sops
