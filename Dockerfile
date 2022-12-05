@@ -88,9 +88,11 @@ RUN sudo apt-get install -y --no-install-recommends terraform && \
     ## go-task
     sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
     sudo apt remove -y --auto-remove software-properties-common && \
-    rm -rf /var/lib/apt/lists/* && \
-	#Kubectl
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    rm -rf /var/lib/apt/lists/*
+
+
+#Kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     mv kubectl /usr/bin/kubectl && \
     chmod +x /usr/bin/kubectl
 
