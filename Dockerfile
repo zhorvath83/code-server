@@ -52,15 +52,15 @@ RUN sudo apt-get update -y && \
 	gpg --no-default-keyring --keyring "$KEYRING" --list-keys  && \
 	echo "deb [signed-by=$KEYRING] \
 		https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-		sudo tee /etc/apt/sources.list.d/hashicorp.list  && \
+		sudo tee /etc/apt/sources.list.d/hashicorp.list && \
     ## Installing Node.js for Prettier
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh \
-		&& . ${CODER_HOME}/install_nvm.sh \
-		&& rm -rf ${CODER_HOME}/install_nvm.sh
-	source ~/.nvm/nvm.sh \
-		&& nvm install $NODEJS_VERSION \
-		$$ nvm alias default $NODEJS_VERSION \
-		&& nvm use default
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
+	. ${CODER_HOME}/install_nvm.sh && \
+	rm -rf ${CODER_HOME}/install_nvm.sh && \
+	source ~/.nvm/nvm.sh && \
+	nvm install $NODEJS_VERSION && \
+	nvm alias default $NODEJS_VERSION && \
+	nvm use default && \
     sudo apt-get update -y && \
     ## Terraform, Node.js
     sudo apt-get install -y --no-install-recommends terraform nodejs && \
@@ -89,29 +89,29 @@ RUN sudo apt-get update -y && \
 	#Kubectl
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     mv kubectl /usr/bin/kubectl && \
-    chmod +x /usr/bin/kubectl && \
+    chmod +x /usr/bin/kubectl
 
 # zsh
-RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh \
-  && echo 'y' | . ~/oh_my_zsh.sh \
-  && rm -rf  ~/oh_my_zsh.sh \
-  && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions \
-  && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting \
-  && sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc 
+RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh && \
+	echo 'y' | . ~/oh_my_zsh.sh && \
+	rm -rf  ~/oh_my_zsh.sh && \
+	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
+	sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc 
 
  # default bash
-RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections
-RUN sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
+RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
+	sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 # git config
-RUN GITUSER=${{ secrets.USERNAME }} \
-	&& GITMAIL=${{ secrets.MAILADDRESS }} \
-	&& git config --global --add pull.rebase false \
-    && git config --global --add user.name ${GITUSER} \
-    && git config --global --add user.email ${GITMAIL} \
-    && git config --global core.editor vim \
-    && git config --global init.defaultBranch master \
-    && git config --global alias.pullall '!git pull && git submodule update --init --recursive'
+RUN GITUSER=${{ secrets.USERNAME }} && \
+	GITMAIL=${{ secrets.MAILADDRESS }} && \
+	git config --global --add pull.rebase false && \
+	git config --global --add user.name ${GITUSER} && \
+	git config --global --add user.email ${GITMAIL} && \
+	git config --global core.editor vim && \
+	git config --global init.defaultBranch master && \
+	git config --global alias.pullall '!git pull && git submodule update --init --recursive'
 
 # vscode plugin
 RUN HOME=${CODER_HOME} code-server \
