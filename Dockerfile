@@ -59,20 +59,20 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     sudo apt-get update -y
 
 ## Installing Node.js for Prettier
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh && \
-    export NVM_DIR="$HOME/.nvm" && \
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
-    source .bashrc && \
-    echo $NVM_DIR  && \
-    . ${CODER_HOME}/install_nvm.sh && \
-    rm -rf ${CODER_HOME}/install_nvm.sh && \
-    source ~/.nvm/nvm.sh && \
-    nvm install $NODEJS_VERSION && \
-    nvm alias default $NODEJS_VERSION && \
-    nvm use default && \
-    node -v && \
-    npm -v && \
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_SH_VERSION}/install.sh >> ${CODER_HOME}/install_nvm.sh
+RUN export NVM_DIR="$HOME/.nvm"
+RUN [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+RUN [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+RUN source .bashrc
+RUN echo $NVM_DIR
+RUN . ${CODER_HOME}/install_nvm.sh
+RUN rm -rf ${CODER_HOME}/install_nvm.sh
+RUN source ~/.nvm/nvm.sh
+RUN nvm install $NODEJS_VERSION
+RUN nvm alias default $NODEJS_VERSION
+RUN nvm use default
+RUN node -v
+RUN npm -v
 
 
 ## Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
