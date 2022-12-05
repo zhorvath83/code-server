@@ -12,10 +12,6 @@ ENV YQ_VERSION=v4.28.2
 # renovate: datasource=github-releases depName=mozilla/sops
 ENV SOPS_VERSION=v3.7.3
 
-ENV NVM_SH_VERSION=v0.39.2
-
-ENV NODEJS_VERSION=19.2.0
-
 # code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
 ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery","cacheUrl": "https://vscode.blob.core.windows.net/gallery/index","itemUrl": "https://marketplace.visualstudio.com/items"}'
@@ -74,10 +70,10 @@ RUN npm install --save-dev --save-exact prettier && \
 
 
 ## Installing SOPS for encrypting secrets
-RUN wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
-    chmod +x /usr/bin/yq && \
-    wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
-    chmod +x /usr/local/bin/sops
+RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
+    sudo chmod +x /usr/bin/yq && \
+    sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
+    sudo chmod +x /usr/local/bin/sops
 
 ## Golang for Go-Task
 RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
