@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-c"]
 
 USER coder
 
-ARG ARCH=linux-amd64
+ARG ARCH=amd64
 ARG CODER_HOME="/home/coder"
 
 # renovate: datasource=github-releases depName=mikefarah/yq
