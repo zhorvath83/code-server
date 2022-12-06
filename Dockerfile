@@ -96,10 +96,10 @@ RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
     go version && \
     # Updating all packages in GOPATH
     go get -u all && \
-    go mod tidy
-    echo "export GOPATH=$GOPATH" >> ~/.profile
-    echo "export PATH=$GOPATH/bin:$PATH" >> ~/.profile
-    echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile
+    go mod tidy && \
+    echo "export GOPATH=$GOPATH" >> ~/.profile && \
+    echo "export PATH=$GOPATH/bin:$PATH" >> ~/.profile && \
+    echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile && \
     echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
 
 # Installing go-task
