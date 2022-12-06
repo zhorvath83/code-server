@@ -4,13 +4,17 @@ SHELL ["/bin/bash", "-c"]
 
 USER coder
 
-ENV CODER_HOME="/home/coder"
+ARG ARCH=linux-amd64
+ARG CODER_HOME="/home/coder"
 
 # renovate: datasource=github-releases depName=mikefarah/yq
-ENV YQ_VERSION=v4.28.2
+ARG YQ_VERSION=v4.28.2
 
 # renovate: datasource=github-releases depName=mozilla/sops
-ENV SOPS_VERSION=v3.7.3
+ARG SOPS_VERSION=v3.7.3
+
+# renovate: datasource=golang-version
+ARG GO_VERSION=1.19.4
 
 # code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
@@ -37,6 +41,18 @@ RUN sudo apt-get update -y && \
         git-extras \
         # For generating htpasswd
         apache2-utils
+
+# zsh
+RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh && \
+    echo 'y' | . ~/oh_my_zsh.sh && \
+    rm -rf  ~/oh_my_zsh.sh && \
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
+    sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc 
+
+# default bash
+RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
+    sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 # Adding Hashicorp and Node.js repo
 # Installing Terraform and npm (for Prettier)
@@ -70,35 +86,29 @@ RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION
     sudo chmod +x /usr/local/bin/sops
 
 # Golang for Go-Task
-RUN wget -q -O go.tgz "https://go.dev/dl/$(curl https://go.dev/VERSION?m=text).linux-amd64.tar.gz" && \
-    sudo tar -C /usr/local -xzf go.tgz && \
-    sudo rm go.tgz && \
-    echo 'export PATH=$PATH:/usr/local/go/bin' | sudo tee --append /etc/profile >/dev/null && \
-    # go-task
-    sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin && \
-    # When .bashrc or .zshrc has been modified, the change is not applied immediately. 
-    source ~/.bashrc && \
-    source ~/.profile && \
+ARG GOPATH=$HOME/go
+ENV PATH=$PATH:/usr/local/go/bin
+RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
+    wget "https://golang.org/dl/${GOPKG}" && \
+    sudo tar -C /usr/local -xzf "${GOPKG}" && \
+    mkdir -p "${GOPATH}" && \
+    rm "${GOPKG}" && \
+    go version && \
     # Updating all packages in GOPATH
     go get -u all && \
     go mod tidy
+    echo "export GOPATH=$GOPATH" >> ~/.profile
+    echo "export PATH=$GOPATH/bin:$PATH" >> ~/.profile
+    echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile
+    echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
+
+# Installing go-task
+RUN sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
 # Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     sudo mv kubectl /usr/bin/kubectl && \
     sudo chmod +x /usr/bin/kubectl
-
-# zsh
-RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh && \
-	echo 'y' | . ~/oh_my_zsh.sh && \
-	rm -rf  ~/oh_my_zsh.sh && \
-	git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
-	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
-	sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc 
-
-# default bash
-RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
-	sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 # Git config
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
