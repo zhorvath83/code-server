@@ -94,10 +94,10 @@ RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
     mkdir -p "${GOPATH}" && \
     rm "${GOPKG}" && \
     go version && \
-    echo "export GOPATH=$GOPATH" >> ~/.profile && \
-    echo "export PATH=$GOPATH/bin:$PATH" >> ~/.profile && \
-    echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.profile && \
-    echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
+    echo "export GOPATH=$GOPATH" | tee -a "~/.profile" && \
+    echo "export PATH=$GOPATH/bin:$PATH" | tee -a "~/.profile" && \
+    echo "export PATH=$PATH:/usr/local/go/bin" | tee -a "~/.profile" && \
+    echo "export PATH=$PATH:/usr/local/go/bin" | tee -a "/etc/profile"
 
 # Installing go-task
 RUN sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
