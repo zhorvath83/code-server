@@ -86,7 +86,7 @@ RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION
     sudo chmod +x /usr/local/bin/sops
 
 # Golang for Go-Task
-ARG GOPATH=$HOME/go
+ARG GOPATH=$CODER_HOME/go
 ENV PATH=$PATH:/usr/local/go/bin
 RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
     wget "https://golang.org/dl/${GOPKG}" && \
