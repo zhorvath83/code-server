@@ -120,9 +120,12 @@ RUN --mount=type=secret,id=USERNAME \
     git config --global init.defaultBranch master && \
     git config --global alias.pullall '!git pull && git submodule update --init --recursive'
 
+## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
+## the container by forwarding host UID/GID later.
+#USER $UID:$GID
+
 # vscode plugin
 RUN HOME=${CODER_HOME} code-server \
-	--user-data-dir=${CODER_HOME}/.local/share/code-server \
 	--install-extension equinusocio.vsc-material-theme \
 	--install-extension PKief.material-icon-theme \
 	--install-extension vscode-icons-team.vscode-icons \
@@ -133,10 +136,24 @@ RUN HOME=${CODER_HOME} code-server \
     	--install-extension MichaelCurrin.auto-commit-msg
 
 # Cleanup
-RUN sudo sudo apt remove -y --auto-remove software-properties-common && \
-    sudo rm -rf /var/lib/apt/lists/*
+RUN echo "[code-server] Dependency installation completed, cleaning up..." && \
+    sudo sudo apt remove -y --auto-remove software-properties-common && \
+    rm -rfv /home/coder/*.deb /tmp/*.deb || true && \
+    sudo apt clean && \
+    sudo rm -rvf /var/lib/apt/lists/* /var/cache/debconf/* /tmp/* /var/tmp/* && \
+    rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs
+    echo "[code-server] Cleanup done"
+
 
 COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 
-# project volume
-RUN mkdir ${CODER_HOME}/project
+
+#USER 1000
+RUN \
+    mkdir ${CODER_HOME}/projects && \
+    mkdir ${CODER_HOME}/.ssh && \
+    chmod 700 ${CODER_HOME}/.ssh
+
+VOLUME /home/coder/projects
+VOLUME /home/coder/.ssh
+VOLUME /home/coder/.local/share/code-server/User/
