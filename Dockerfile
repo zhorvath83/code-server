@@ -141,7 +141,7 @@ RUN echo "[code-server] Dependency installation completed, cleaning up..." && \
     rm -rfv /home/coder/*.deb /tmp/*.deb || true && \
     sudo apt clean && \
     sudo rm -rvf /var/lib/apt/lists/* /var/cache/debconf/* /tmp/* /var/tmp/* && \
-    rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs
+    rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs && \
     echo "[code-server] Cleanup done"
 
 
