@@ -89,9 +89,9 @@ RUN \
     curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" && \
     tar xf age.tar.gz && \
     sudo mv age/age /usr/local/bin && \
-    sudo chmod +x /usr/bin/age && \
+    sudo chmod +x /usr/bin/age/age && \
     sudo mv age/age-keygen /usr/local/bin && \
-    sudo chmod +x /usr/bin/age-keygen && \
+    sudo chmod +x /usr/bin/age/age-keygen && \
     sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
     sudo chmod +x /usr/bin/yq
 
