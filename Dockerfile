@@ -136,7 +136,8 @@ RUN HOME=${CODER_HOME} code-server \
     	--install-extension MichaelCurrin.auto-commit-msg
 
 # Cleanup
-RUN echo "[code-server] Dependency installation completed, cleaning up..." && \
+RUN \
+    echo "[code-server] Dependency installation completed, cleaning up..." && \
     sudo sudo apt remove -y --auto-remove software-properties-common && \
     rm -rfv /home/coder/*.deb /tmp/*.deb || true && \
     sudo apt clean && \
@@ -145,8 +146,9 @@ RUN echo "[code-server] Dependency installation completed, cleaning up..." && \
     echo "[code-server] Cleanup done"
 
 
-COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-
+COPY \
+    --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+    --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 
 #USER 1000
 RUN \
@@ -154,6 +156,6 @@ RUN \
     mkdir ${CODER_HOME}/.ssh && \
     chmod 700 ${CODER_HOME}/.ssh
 
-VOLUME /home/coder/projects
-VOLUME /home/coder/.ssh
-VOLUME /home/coder/.local/share/code-server/User/
+VOLUME \
+    /home/coder/projects
+    /home/coder/.ssh
