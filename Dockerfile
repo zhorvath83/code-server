@@ -13,6 +13,9 @@ ARG YQ_VERSION=v4.28.2
 # renovate: datasource=github-releases depName=mozilla/sops
 ARG SOPS_VERSION=v3.7.3
 
+# renovate: datasource=github-releases depName= FiloSottile/age 
+ARG AGE_VERSION=v1.0.0
+
 # renovate: datasource=golang-version
 ARG GO_VERSION=1.19.4
 
@@ -70,7 +73,7 @@ RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
     sudo apt-get install -y --no-install-recommends terraform nodejs && \
     sudo apt-get clean
 
-# Installing Terraform, prettier, pre-commit, pre-commit-hooks, yamllint, ansible-core
+# Installing Terraform, prettier, yq, pre-commit, pre-commit-hooks, yamllint, ansible-core
 RUN sudo npm install --save-dev --save-exact prettier && \
     ##npm install --global prettier && \
     # pip
@@ -78,12 +81,19 @@ RUN sudo npm install --save-dev --save-exact prettier && \
     # Installing pre-commit, pre-commit-hooks, yamllint, ansible-core && \
     sudo pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
 
-
-# Installing SOPS for encrypting secrets
-RUN sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
-    sudo chmod +x /usr/bin/yq && \
+# Installing SOPS and age for encrypting secrets
+# Installing yq, a command-line YAML, JSON and XML processor
+RUN \
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
-    sudo chmod +x /usr/local/bin/sops
+    sudo chmod +x /usr/local/bin/sops && \
+    curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-v${AGE_VERSION}-linux-amd64.tar.gz" && \
+    tar xf age.tar.gz && \
+    sudo mv age/age /usr/local/bin && \
+    sudo chmod +x /usr/bin/age && \
+    sudo mv age/age-keygen /usr/local/bin && \
+    sudo chmod +x /usr/bin/age-keygen && \
+    sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
+    sudo chmod +x /usr/bin/yq
 
 # Golang for Go-Task
 ARG GOPATH=$CODER_HOME/go
