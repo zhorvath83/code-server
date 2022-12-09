@@ -86,7 +86,7 @@ RUN sudo npm install --save-dev --save-exact prettier && \
 RUN \
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     sudo chmod +x /usr/local/bin/sops && \
-    curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-v${AGE_VERSION}-linux-amd64.tar.gz" && \
+    curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" && \
     tar xf age.tar.gz && \
     sudo mv age/age /usr/local/bin && \
     sudo chmod +x /usr/bin/age && \
@@ -113,7 +113,7 @@ RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
 RUN sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
 # Kubectl
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl" && \
     sudo mv kubectl /usr/bin/kubectl && \
     sudo chmod +x /usr/bin/kubectl
 
