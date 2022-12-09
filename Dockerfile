@@ -147,7 +147,7 @@ RUN \
 
 
 COPY \
-    --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+    --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json && \
     --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 
 #USER 1000
@@ -156,6 +156,5 @@ RUN \
     mkdir ${CODER_HOME}/.ssh && \
     chmod 700 ${CODER_HOME}/.ssh
 
-VOLUME \
-    /home/coder/projects
-    /home/coder/.ssh
+VOLUME $CODER_HOME/projects
+VOLUME $CODER_HOME/.ssh
