@@ -89,11 +89,11 @@ RUN \
     curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" && \
     tar xf age.tar.gz && \
     sudo mv age/age /usr/local/bin && \
-    sudo chmod +x /usr/bin/age/age && \
+    sudo chmod +x /usr/local/bin/age && \
     sudo mv age/age-keygen /usr/local/bin && \
-    sudo chmod +x /usr/bin/age/age-keygen && \
-    sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/bin/yq && \
-    sudo chmod +x /usr/bin/yq
+    sudo chmod +x /usr/local/bin/age-keygen && \
+    sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq && \
+    sudo chmod +x /usr/local/bin/yq
 
 # Golang for Go-Task
 ARG GOPATH=$CODER_HOME/go
@@ -114,8 +114,8 @@ RUN sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /us
 
 # Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl" && \
-    sudo mv kubectl /usr/bin/kubectl && \
-    sudo chmod +x /usr/bin/kubectl
+    sudo mv kubectl /usr/local/bin/kubectl && \
+    sudo chmod +x /usr/local/bin/kubectl
 
 # Git config
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
