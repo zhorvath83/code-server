@@ -146,9 +146,8 @@ RUN \
     echo "[code-server] Cleanup done"
 
 
-COPY \
-    --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json && \
-    --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+COPY --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 
 #USER 1000
 RUN \
