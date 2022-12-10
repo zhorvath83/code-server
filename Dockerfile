@@ -5,7 +5,6 @@ SHELL ["/bin/bash", "-c"]
 USER coder
 
 ARG ARCH=amd64
-ARG CODER_HOME="/home/coder"
 
 # renovate: datasource=github-releases depName=mikefarah/yq
 ARG YQ_VERSION=v4.28.2
@@ -13,11 +12,16 @@ ARG YQ_VERSION=v4.28.2
 # renovate: datasource=github-releases depName=mozilla/sops
 ARG SOPS_VERSION=v3.7.3
 
-# renovate: datasource=github-releases depName= FiloSottile/age 
+# renovate: datasource=github-releases depName=FiloSottile/age 
 ARG AGE_VERSION=v1.0.0
 
 # renovate: datasource=golang-version
 ARG GO_VERSION=1.19.4
+
+# renovate: datasource=github-releases depName=cli/cli
+ARG GH_VERSION=2.20.2
+
+ENV CODER_HOME="/home/coder"
 
 # code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
@@ -130,6 +134,13 @@ RUN --mount=type=secret,id=USERNAME \
     git config --global init.defaultBranch master && \
     git config --global alias.pullall '!git pull && git submodule update --init --recursive'
 
+# install gh (github cli) 
+RUN \
+    wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz
+    tar xvf gh_${VERSION}_linux_amd64.tar.gz
+    sudo mv gh_${VERSION}_linux_amd64/bin/gh /usr/local/bin/
+    sudo chmod +x /usr/local/bin/gh
+
 ## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
 ## the container by forwarding host UID/GID later.
 #USER $UID:$GID
@@ -164,6 +175,10 @@ RUN \
     mkdir ${CODER_HOME}/projects && \
     mkdir ${CODER_HOME}/.ssh && \
     chmod 700 ${CODER_HOME}/.ssh
+
+ENV HOME=${CODER_HOME}
+WORKDIR ${HOME}/projects
+
 
 VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
