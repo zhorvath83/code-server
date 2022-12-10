@@ -138,11 +138,6 @@ RUN \
     sudo tar -C /usr/local/bin -xzf /tmp/${GHPKG} --wildcards --no-anchored 'gh' --strip-components 2 && \
     sudo chmod +x /usr/local/bin/gh
 
-# Adding github.com SSH keys to known_hosts
-RUN \
-    curl --silent https://api.github.com/meta \
-      | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
-
 # vscode plugin
 RUN HOME=${CODER_HOME} code-server \
 	--install-extension equinusocio.vsc-material-theme \
@@ -168,6 +163,11 @@ RUN \
     mkdir ${CODER_HOME}/.ssh && \
     mkdir ${CODER_HOME}/entrypoint.d && \
     chmod 700 ${CODER_HOME}/.ssh
+
+# Adding github.com SSH keys to known_hosts
+RUN \
+    curl --silent https://api.github.com/meta \
+      | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
 
 COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 COPY --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
