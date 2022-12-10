@@ -90,11 +90,9 @@ RUN sudo npm install --save-dev --save-exact prettier && \
 RUN \
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     sudo chmod +x /usr/local/bin/sops && \
-    sudo wget -q "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" -O /tmp/age.tar.gz && \
-    tar xf /tmp/age.tar.gz && \
-    sudo mv /tmp/age/age /usr/local/bin && \
+    wget -q "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" -O /tmp/age.tar.gz && \
+    sudo tar -C /usr/local -xzf /tmp/age.tar.gz && \
     sudo chmod +x /usr/local/bin/age && \
-    sudo mv /tmp/age/age-keygen /usr/local/bin && \
     sudo chmod +x /usr/local/bin/age-keygen && \
     sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq && \
     sudo chmod +x /usr/local/bin/yq
@@ -137,8 +135,7 @@ RUN --mount=type=secret,id=USERNAME \
 RUN \
     export GHPKG="gh_${GH_VERSION}_linux_${ARCH}.tar.gz"; \
     wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz -O /tmp/${GHPKG} && \
-    tar xvf /tmp/${GHPKG} && \
-    sudo mv /tmp/gh_${GH_VERSION}_linux_amd64/bin/gh /usr/local/bin/ && \
+    sudo tar -C /usr/local/bin -xzf /tmp/${GHPKG} --wildcards --no-anchored 'gh' --strip-components 2
     sudo chmod +x /usr/local/bin/gh
 
 ## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
