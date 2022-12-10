@@ -138,9 +138,10 @@ RUN \
     sudo tar -C /usr/local/bin -xzf /tmp/${GHPKG} --wildcards --no-anchored 'gh' --strip-components 2 && \
     sudo chmod +x /usr/local/bin/gh
 
-## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
-## the container by forwarding host UID/GID later.
-#USER $UID:$GID
+# Adding github.com SSH keys to known_hosts
+RUN \
+    curl --silent https://api.github.com/meta \
+      | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
 
 # vscode plugin
 RUN HOME=${CODER_HOME} code-server \
@@ -162,15 +163,16 @@ RUN \
     rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs && \
     echo "[code-server] Cleanup done"
 
-
-COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-COPY --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
-
-#USER 1000
 RUN \
     mkdir ${CODER_HOME}/projects && \
     mkdir ${CODER_HOME}/.ssh && \
+    mkdir ${CODER_HOME}/entrypoint.d
     chmod 700 ${CODER_HOME}/.ssh
+
+COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+COPY --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+COPY --chown=coder:coder clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
+
 
 ENV HOME=${CODER_HOME}
 WORKDIR ${HOME}/projects
