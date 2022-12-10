@@ -136,9 +136,9 @@ RUN --mount=type=secret,id=USERNAME \
 
 # install gh (github cli) 
 RUN \
-    wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz
-    tar xvf gh_${VERSION}_linux_amd64.tar.gz
-    sudo mv gh_${VERSION}_linux_amd64/bin/gh /usr/local/bin/
+    wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz && \
+    tar xvf gh_${VERSION}_linux_amd64.tar.gz && \
+    sudo mv gh_${VERSION}_linux_amd64/bin/gh /usr/local/bin/ && \
     sudo chmod +x /usr/local/bin/gh
 
 ## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
