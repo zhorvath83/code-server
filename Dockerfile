@@ -135,7 +135,7 @@ RUN --mount=type=secret,id=USERNAME \
 RUN \
     export GHPKG="gh_${GH_VERSION}_linux_${ARCH}.tar.gz"; \
     wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz -O /tmp/${GHPKG} && \
-    sudo tar -C /usr/local/bin -xzf /tmp/${GHPKG} --wildcards --no-anchored 'gh' --strip-components 2
+    sudo tar -C /usr/local/bin -xzf /tmp/${GHPKG} --wildcards --no-anchored 'gh' --strip-components 2 && \
     sudo chmod +x /usr/local/bin/gh
 
 ## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
