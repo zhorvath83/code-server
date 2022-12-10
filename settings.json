@@ -7,5 +7,6 @@
   "git.postCommitCommand": "sync",
   "git.autofetch": true,
   "explorer.confirmDragAndDrop": true,
-  "editor.bracketPairColorization.enabled": true
+  "editor.bracketPairColorization.enabled": true,
+  "redhat.telemetry.enabled": false
   }
