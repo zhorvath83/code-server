@@ -90,11 +90,11 @@ RUN sudo npm install --save-dev --save-exact prettier && \
 RUN \
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     sudo chmod +x /usr/local/bin/sops && \
-    curl -Lo age.tar.gz "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" && \
-    tar xf age.tar.gz && \
-    sudo mv age/age /usr/local/bin && \
+    sudo wget -q "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" -O /tmp/age.tar.gz && \
+    tar xf /tmp/age.tar.gz && \
+    sudo mv /tmp/age/age /usr/local/bin && \
     sudo chmod +x /usr/local/bin/age && \
-    sudo mv age/age-keygen /usr/local/bin && \
+    sudo mv /tmp/age/age-keygen /usr/local/bin && \
     sudo chmod +x /usr/local/bin/age-keygen && \
     sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq && \
     sudo chmod +x /usr/local/bin/yq
@@ -103,10 +103,9 @@ RUN \
 ARG GOPATH=$CODER_HOME/go
 ENV PATH=$PATH:/usr/local/go/bin
 RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
-    wget "https://golang.org/dl/${GOPKG}" && \
-    sudo tar -C /usr/local -xzf "${GOPKG}" && \
+    wget -q "https://golang.org/dl/${GOPKG}" -O /tmp/${GOPKG} && \
+    sudo tar -C /usr/local -xzf "/tmp/${GOPKG}" && \
     mkdir -p "${GOPATH}" && \
-    rm "${GOPKG}" && \
     go version && \
     echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile" && \
     echo "export PATH=$GOPATH/bin:$PATH" | tee -a "$CODER_HOME/.profile" && \
@@ -136,9 +135,10 @@ RUN --mount=type=secret,id=USERNAME \
 
 # install gh (github cli) 
 RUN \
-    wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz && \
-    tar xvf gh_${GH_VERSION}_linux_amd64.tar.gz && \
-    sudo mv gh_${GH_VERSION}_linux_amd64/bin/gh /usr/local/bin/ && \
+    export GHPKG="gh_${GH_VERSION}_linux_${ARCH}.tar.gz"; \
+    wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz -O /tmp/${GHPKG} && \
+    tar xvf /tmp/${GHPKG} && \
+    sudo mv /tmp/gh_${GH_VERSION}_linux_amd64/bin/gh /usr/local/bin/ && \
     sudo chmod +x /usr/local/bin/gh
 
 ## We have to install extensions as host UID:GID so the code-server can only identify the extensions when we start
