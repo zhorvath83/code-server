@@ -91,7 +91,7 @@ RUN \
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
     sudo chmod +x /usr/local/bin/sops && \
     wget -q "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" -O /tmp/age.tar.gz && \
-    sudo tar -C /usr/local/bin -xzf /tmp/age.tar.gz && \
+    sudo tar -C /usr/local/bin -xzf /tmp/age.tar.gz --strip-components 1 && \
     sudo chmod +x /usr/local/bin/age && \
     sudo chmod +x /usr/local/bin/age-keygen && \
     sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq && \
