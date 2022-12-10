@@ -1,13 +1,12 @@
 {
-  "workbench.colorTheme": "Material Theme",
-  "##workbench.colorTheme": "Default Dark+",
-  "workbench.iconTheme": "eq-material-theme-icons",
+  "workbench.colorTheme": "Material Theme Darker High Contrast",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.startupEditor": "none",
   "terminal.integrated.defaultProfile.linux": "zsh",
   "git.enableSmartCommit": true,
   "git.confirmSync": false,
   "git.postCommitCommand": "sync",
   "git.autofetch": true,
   "explorer.confirmDragAndDrop": true,
-  "editor.bracketPairColorization.enabled": true,
-  "workbench.startupEditor": "none"
+  "editor.bracketPairColorization.enabled": true
   }
