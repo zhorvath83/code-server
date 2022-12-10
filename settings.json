@@ -3,11 +3,9 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.startupEditor": "none",
   "terminal.integrated.defaultProfile.linux": "zsh",
-  "git.enableSmartCommit": true,
   "git.confirmSync": false,
   "git.postCommitCommand": "sync",
   "git.autofetch": true,
   "explorer.confirmDragAndDrop": true,
   "editor.bracketPairColorization.enabled": true
-
   }
