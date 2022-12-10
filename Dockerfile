@@ -149,7 +149,6 @@ RUN \
 RUN HOME=${CODER_HOME} code-server \
 	--install-extension equinusocio.vsc-material-theme \
 	--install-extension PKief.material-icon-theme \
-	--install-extension vscode-icons-team.vscode-icons \
     	--install-extension Rubymaniac.vscode-paste-and-indent \
     	--install-extension redhat.vscode-yaml \
     	--install-extension esbenp.prettier-vscode \
