@@ -166,7 +166,7 @@ RUN \
 RUN \
     mkdir ${CODER_HOME}/projects && \
     mkdir ${CODER_HOME}/.ssh && \
-    mkdir ${CODER_HOME}/entrypoint.d
+    mkdir ${CODER_HOME}/entrypoint.d && \
     chmod 700 ${CODER_HOME}/.ssh
 
 COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
