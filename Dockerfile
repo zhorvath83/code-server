@@ -22,6 +22,8 @@ ARG GO_VERSION=1.19.4
 ARG GH_VERSION=2.20.2
 
 ENV CODER_HOME="/home/coder"
+ENV HOME=${CODER_HOME}
+ENV ENTRYPOINTD=${HOME}/entrypoint.d
 
 # code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
@@ -174,7 +176,6 @@ COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/shar
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
 
-ENV HOME=${CODER_HOME}
 WORKDIR ${HOME}/projects
 
 VOLUME $CODER_HOME/projects
