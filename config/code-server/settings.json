@@ -8,5 +8,10 @@
   "git.autofetch": true,
   "explorer.confirmDragAndDrop": true,
   "editor.bracketPairColorization.enabled": true,
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "security.workspace.trust.startupPrompt": "never",
+  "security.workspace.trust.enabled": false,
+  "security.workspace.trust.banner": "never",
+  "security.workspace.trust.emptyWindow": false,
+  "terminal.integrated.sendKeybindingsToShell": true
   }

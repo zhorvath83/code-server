@@ -169,14 +169,13 @@ RUN \
     curl --silent https://api.github.com/meta \
       | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
 
-COPY --chown=coder:coder settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-COPY --chown=coder:coder coder.json ${CODER_HOME}/.local/share/code-server/coder.json
-COPY --chown=coder:coder clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
-
+COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
+COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
 
 ENV HOME=${CODER_HOME}
 WORKDIR ${HOME}/projects
-
 
 VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
