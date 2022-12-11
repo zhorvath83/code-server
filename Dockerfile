@@ -18,9 +18,6 @@ ARG AGE_VERSION=v1.0.0
 # renovate: datasource=golang-version
 ARG GO_VERSION=1.19.4
 
-# renovate: datasource=github-releases depName=cli/cli
-ARG GH_VERSION=2.20.2
-
 ENV CODER_HOME="/home/coder"
 ENV HOME=${CODER_HOME}
 ENV ENTRYPOINTD=${HOME}/entrypoint.d
@@ -121,6 +118,7 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     sudo chmod +x /usr/local/bin/kubectl
 
 # Git config
+# Adding github.com SSH keys to known_hosts
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
 RUN --mount=type=secret,id=USERNAME \
     --mount=type=secret,id=MAILADDRESS \
@@ -131,14 +129,9 @@ RUN --mount=type=secret,id=USERNAME \
     git config --global --add user.email $GIT_MAILADDRESS && \
     git config --global core.editor vim && \
     git config --global init.defaultBranch master && \
-    git config --global alias.pullall '!git pull && git submodule update --init --recursive'
-
-# install gh (github cli) 
-RUN \
-    export GHPKG="gh_${GH_VERSION}_linux_${ARCH}.tar.gz"; \
-    wget https://github.com/cli/cli/releases/download/v${GH_VERSION}/gh_${GH_VERSION}_linux_${ARCH}.tar.gz -O /tmp/${GHPKG} && \
-    sudo tar -C /usr/local/bin -xzf /tmp/${GHPKG} --wildcards --no-anchored 'gh' --strip-components 2 && \
-    sudo chmod +x /usr/local/bin/gh
+    git config --global alias.pullall '!git pull && git submodule update --init --recursive' && \
+    curl --silent https://api.github.com/meta \
+      | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
 
 # vscode plugin
 RUN HOME=${CODER_HOME} code-server \
@@ -166,15 +159,11 @@ RUN \
     mkdir ${CODER_HOME}/entrypoint.d && \
     chmod 700 ${CODER_HOME}/.ssh
 
-# Adding github.com SSH keys to known_hosts
-RUN \
-    curl --silent https://api.github.com/meta \
-      | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
-
 COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
+COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 WORKDIR ${HOME}/projects
 
