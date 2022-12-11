@@ -26,6 +26,18 @@ ENV ENTRYPOINTD=${HOME}/entrypoint.d
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
 ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery","cacheUrl": "https://vscode.blob.core.windows.net/gallery/index","itemUrl": "https://marketplace.visualstudio.com/items"}'
 
+RUN \
+    mkdir ${CODER_HOME}/projects && \
+    mkdir ${CODER_HOME}/.ssh && \
+    mkdir ${CODER_HOME}/entrypoint.d && \
+    chmod 700 ${CODER_HOME}/.ssh
+
+COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
+COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
+COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
+
 RUN sudo apt-get update -y && \
     sudo apt-get install --assume-yes --no-install-recommends \
         net-tools \
@@ -152,18 +164,6 @@ RUN \
     sudo rm -rvf /var/lib/apt/lists/* /var/cache/debconf/* /tmp/* /var/tmp/* && \
     rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs && \
     echo "[code-server] Cleanup done"
-
-RUN \
-    mkdir ${CODER_HOME}/projects && \
-    mkdir ${CODER_HOME}/.ssh && \
-    mkdir ${CODER_HOME}/entrypoint.d && \
-    chmod 700 ${CODER_HOME}/.ssh
-
-COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
-COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
-COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
-COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 WORKDIR ${HOME}/projects
 
