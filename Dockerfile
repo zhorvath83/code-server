@@ -27,11 +27,12 @@ ENV DEFAULT_WORKSPACE=${HOME}/projects
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
 ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery","cacheUrl": "https://vscode.blob.core.windows.net/gallery/index","itemUrl": "https://marketplace.visualstudio.com/items"}'
 
-RUN \
-    mkdir ${CODER_HOME}/projects && \
-    mkdir ${CODER_HOME}/.ssh && \
-    mkdir ${CODER_HOME}/entrypoint.d && \
+RUN <<EOF
+    mkdir ${CODER_HOME}/projects
+    mkdir ${CODER_HOME}/.ssh
+    mkdir ${CODER_HOME}/entrypoint.d
     chmod 700 ${CODER_HOME}/.ssh
+EOF
 
 COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
