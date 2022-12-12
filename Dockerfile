@@ -44,17 +44,16 @@ COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 
 RUN  <<EOF
-    # Adding Hashicorp and Node.js repo
-
+    # Adding Hashicorp repo
     KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
+    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
     # Listing signing key
     gpg --no-default-keyring --keyring "$KEYRING" --list-keys
-    echo "deb [signed-by=$KEYRING] \
-        https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    echo "deb [signed-by=$KEYRING] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
         sudo tee /etc/apt/sources.list.d/hashicorp.list
+
     # Adding Node.js repo
-    curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash -
+    wget -qO- https://deb.nodesource.com/setup_12.x | sudo -E bash -
 
     sudo apt-get update -y
     sudo apt-get install --assume-yes --no-install-recommends \
