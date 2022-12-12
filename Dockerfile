@@ -44,6 +44,8 @@ COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 
 RUN  <<EOF
+    sudo apt-get update -y
+    sudo apt-get install --assume-yes --no-install-recommends wget curl
     # Adding Hashicorp repo
     KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg
     wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
@@ -63,6 +65,7 @@ RUN  <<EOF
         net-tools \
         iputils-ping \
         wget \
+        curl \
         vim \
         jq \
         gnupg \
@@ -75,7 +78,6 @@ RUN  <<EOF
         ca-certificates \
         unzip \
         bzr \
-        curl \
         git-extras \
         # For generating htpasswd
         apache2-utils
