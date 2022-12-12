@@ -29,19 +29,6 @@ ENV DEFAULT_WORKSPACE=${HOME}/projects
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
 ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery","cacheUrl": "https://vscode.blob.core.windows.net/gallery/index","itemUrl": "https://marketplace.visualstudio.com/items"}'
 
-RUN <<EOF
-    mkdir ${CODER_HOME}/projects
-    mkdir ${CODER_HOME}/.ssh
-    mkdir ${CODER_HOME}/entrypoint.d
-    chmod 700 ${CODER_HOME}/.ssh
-EOF
-
-COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-# COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
-COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
-COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
-COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
-
 ARG GOPATH=$CODER_HOME/go
 ENV PATH=$PATH:/usr/local/go/bin
 
@@ -49,6 +36,12 @@ ENV PATH=$PATH:/usr/local/go/bin
 RUN --mount=type=secret,id=USERNAME \
     --mount=type=secret,id=MAILADDRESS \
     <<EOF
+
+    mkdir ${CODER_HOME}/projects
+    mkdir ${CODER_HOME}/.ssh
+    mkdir ${CODER_HOME}/entrypoint.d
+    chmod 700 ${CODER_HOME}/.ssh
+
     sudo apt-get update -y
     sudo apt-get install --assume-yes --no-install-recommends wget curl gnupg
     # Adding Hashicorp repo
@@ -94,8 +87,10 @@ RUN --mount=type=secret,id=USERNAME \
     sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
     sudo npm install --save-dev --save-exact prettier
+
     # pip
     sudo pip3 install --upgrade pip
+
     # Installing pre-commit, pre-commit-hooks, yamllint, ansible-core
     sudo pip install \
         pre-commit \
@@ -161,18 +156,22 @@ RUN --mount=type=secret,id=USERNAME \
     	--install-extension signageos.signageos-vscode-sops \
     	--install-extension MichaelCurrin.auto-commit-msg
 
+    # Cleaning up
+    echo "[code-server] Dependency installation completed, cleaning up..."
+    sudo sudo apt remove -y --auto-remove software-properties-common
+    rm -rfv /home/coder/*.deb /tmp/*.deb || true
+    sudo apt clean
+    sudo rm -rvf /var/lib/apt/lists/* /var/cache/debconf/* /tmp/* /var/tmp/*
+    rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs
+    echo "[code-server] Cleanup done"
 
 EOF
 
-# Cleanup
-RUN \
-    echo "[code-server] Dependency installation completed, cleaning up..." && \
-    sudo sudo apt remove -y --auto-remove software-properties-common && \
-    rm -rfv /home/coder/*.deb /tmp/*.deb || true && \
-    sudo apt clean && \
-    sudo rm -rvf /var/lib/apt/lists/* /var/cache/debconf/* /tmp/* /var/tmp/* && \
-    rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs && \
-    echo "[code-server] Cleanup done"
+COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+# COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
+COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
+COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 #WORKDIR ${HOME}/projects
 
