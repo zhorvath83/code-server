@@ -6,6 +6,7 @@
   "git.confirmSync": false,
   "git.postCommitCommand": "sync",
   "git.autofetch": true,
+  "git.enableSmartCommit": true,
   "explorer.confirmDragAndDrop": true,
   "editor.bracketPairColorization.enabled": true,
   "redhat.telemetry.enabled": false,
