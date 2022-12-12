@@ -42,8 +42,13 @@ COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
 COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
+ARG GOPATH=$CODER_HOME/go
+ENV PATH=$PATH:/usr/local/go/bin
 
-RUN  <<EOF
+# https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
+RUN --mount=type=secret,id=USERNAME \
+    --mount=type=secret,id=MAILADDRESS \
+    <<EOF
     sudo apt-get update -y
     sudo apt-get install --assume-yes --no-install-recommends wget curl gnupg
     # Adding Hashicorp repo
@@ -99,59 +104,55 @@ RUN  <<EOF
         yamllint \
         ansible-core
 
-EOF
+    # Installing SOPS, a simple and flexible tool for managing secrets 
+    sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops
+    sudo chmod +x /usr/local/bin/sops
 
-# Installing SOPS and age for encrypting secrets
-# Installing yq, a command-line YAML, JSON and XML processor
-RUN \
-    sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops && \
-    sudo chmod +x /usr/local/bin/sops && \
-    wget -q "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" -O /tmp/age.tar.gz && \
-    sudo tar -C /usr/local/bin -xzf /tmp/age.tar.gz --strip-components 1 && \
-    sudo chmod +x /usr/local/bin/age && \
-    sudo chmod +x /usr/local/bin/age-keygen && \
-    sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq && \
+    # Installing age, a simple, modern and secure encryption tool. Used with SOPS.
+    wget -q "https://github.com/FiloSottile/age/releases/latest/download/age-${AGE_VERSION}-linux-${ARCH}.tar.gz" -O /tmp/age.tar.gz
+    sudo tar -C /usr/local/bin -xzf /tmp/age.tar.gz --strip-components 1
+    sudo chmod +x /usr/local/bin/age
+    sudo chmod +x /usr/local/bin/age-keygen
+
+    # Installing yq, a command-line YAML, JSON and XML processor
+    sudo wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq
     sudo chmod +x /usr/local/bin/yq
 
-# Golang for Go-Task
-ARG GOPATH=$CODER_HOME/go
-ENV PATH=$PATH:/usr/local/go/bin
-RUN export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
-    wget -q "https://golang.org/dl/${GOPKG}" -O /tmp/${GOPKG} && \
-    sudo tar -C /usr/local -xzf "/tmp/${GOPKG}" && \
-    mkdir -p "${GOPATH}" && \
-    go version && \
-    echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile" && \
-    echo "export PATH=$GOPATH/bin:$PATH" | tee -a "$CODER_HOME/.profile" && \
-    echo "export PATH=$PATH:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile" && \
+    # Golang for Go-Task
+    export GOPKG="go${GO_VERSION}.linux-${ARCH}.tar.gz"; \
+        wget -q "https://golang.org/dl/${GOPKG}" -O /tmp/${GOPKG}
+    sudo tar -C /usr/local -xzf "/tmp/${GOPKG}"
+    mkdir -p "${GOPATH}"
+    go version
+    echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile"
+    echo "export PATH=$GOPATH/bin:$PATH" | tee -a "$CODER_HOME/.profile"
+    echo "export PATH=$PATH:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile"
     echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a "/etc/profile"
 
-# Installing go-task
-RUN sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+    # Installing go-task
+    sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
-# Kubectl
-RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl" && \
-    sudo mv kubectl /usr/local/bin/kubectl && \
-    sudo chmod +x /usr/local/bin/kubectl
+    # Kubectl
+    # curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl" && \
+    # sudo mv kubectl /usr/local/bin/kubectl && \
+    # sudo chmod +x /usr/local/bin/kubectl
 
-# Git config
-# Adding github.com SSH keys to known_hosts
-# https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
-RUN --mount=type=secret,id=USERNAME \
-    --mount=type=secret,id=MAILADDRESS \
-    export GIT_USERNAME=$(sudo cat /run/secrets/USERNAME) && \
-    export GIT_MAILADDRESS=$(sudo cat /run/secrets/MAILADDRESS) && \
-    git config --global --add pull.rebase false && \
-    git config --global --add user.name $GIT_USERNAME && \
-    git config --global --add user.email $GIT_MAILADDRESS && \
-    git config --global core.editor vim && \
-    git config --global init.defaultBranch master && \
-    git config --global alias.pullall '!git pull && git submodule update --init --recursive' && \
+    # Git config
+    # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
+    export GIT_USERNAME=$(sudo cat /run/secrets/USERNAME)
+    export GIT_MAILADDRESS=$(sudo cat /run/secrets/MAILADDRESS)
+    git config --global --add pull.rebase false
+    git config --global --add user.name $GIT_USERNAME
+    git config --global --add user.email $GIT_MAILADDRESS
+    git config --global init.defaultBranch main
+    git config --global alias.pullall '!git pull && git submodule update --init --recursive'
+
+    # Adding github.com SSH keys to known_hosts
     curl --silent https://api.github.com/meta \
       | jq --raw-output '"github.com "+.ssh_keys[]' >> ${CODER_HOME}/.ssh/known_hosts
 
-# vscode plugin
-RUN HOME=${CODER_HOME} code-server \
+    # Installing vscode plugins
+    HOME=${CODER_HOME} code-server \
 	--install-extension equinusocio.vsc-material-theme \
 	--install-extension PKief.material-icon-theme \
     	--install-extension Rubymaniac.vscode-paste-and-indent \
@@ -159,6 +160,9 @@ RUN HOME=${CODER_HOME} code-server \
     	--install-extension esbenp.prettier-vscode \
     	--install-extension signageos.signageos-vscode-sops \
     	--install-extension MichaelCurrin.auto-commit-msg
+
+
+EOF
 
 # Cleanup
 RUN \
@@ -170,7 +174,7 @@ RUN \
     rm -f *.vsix && rm -rf ${CODER_HOME}/.local/share/code-server/CachedExtensionVSIXs && \
     echo "[code-server] Cleanup done"
 
-WORKDIR ${HOME}/projects
+#WORKDIR ${HOME}/projects
 
 VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
