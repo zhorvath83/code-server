@@ -9,7 +9,7 @@ USER coder
 ARG ARCH=amd64
 
 # renovate: datasource=github-releases depName=mikefarah/yq
-ARG YQ_VERSION=v4.28.2
+ARG YQ_VERSION=v4.30.5
 
 # renovate: datasource=github-releases depName=mozilla/sops
 ARG SOPS_VERSION=v3.7.3
