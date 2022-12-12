@@ -58,13 +58,12 @@ RUN  <<EOF
     wget -qO- https://deb.nodesource.com/setup_19.x | sudo -E bash - 
 
     sudo apt-get update -y
+    # Installing npm for Prettier, apache2-utils for generating htpasswd
     sudo apt-get install --assume-yes --no-install-recommends \
         terraform \
-        # Installing npm for Prettier
         nodejs \
         net-tools \
         iputils-ping \
-        vim \
         jq \
         software-properties-common \
         python3 \
@@ -76,7 +75,6 @@ RUN  <<EOF
         unzip \
         bzr \
         git-extras \
-        # For generating htpasswd
         apache2-utils
 
     # Installing zsh
