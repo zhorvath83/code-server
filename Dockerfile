@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:1.4
+# https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/reference.md
 FROM codercom/code-server:4.8.2 AS code-server
 
 SHELL ["/bin/bash", "-c"]
@@ -35,13 +37,30 @@ RUN <<EOF
 EOF
 
 COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+# COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
 COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
-RUN sudo apt-get update -y && \
+
+RUN  <<EOF
+    # Adding Hashicorp and Node.js repo
+
+    KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
+    # Listing signing key
+    gpg --no-default-keyring --keyring "$KEYRING" --list-keys
+        echo "deb [signed-by=$KEYRING] \
+        https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+        sudo tee /etc/apt/sources.list.d/hashicorp.list
+    # Adding Node.js repo
+    curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash -
+
+    sudo apt-get update -y
     sudo apt-get install --assume-yes --no-install-recommends \
+        terraform \
+        # Installing npm for Prettier
+        nodejs \
         net-tools \
         iputils-ping \
         wget \
@@ -62,41 +81,29 @@ RUN sudo apt-get update -y && \
         # For generating htpasswd
         apache2-utils
 
-# zsh
-RUN curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh && \
-    echo 'y' | . ~/oh_my_zsh.sh && \
-    rm -rf  ~/oh_my_zsh.sh && \
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
-    sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc 
-
-# default bash
-RUN echo "dash dash/sh boolean false" | sudo debconf-set-selections && \
+    # Installing zsh
+    curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
+    echo 'y' | . ~/oh_my_zsh.sh
+    rm -rf  ~/oh_my_zsh.sh
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    sed -i "s/plugins=(git.*)$/plugins=(git zsh-syntax-highlighting zsh-autosuggestions)/" ~/.zshrc
+    # default bash
+    echo "dash dash/sh boolean false" | sudo debconf-set-selections
     sudo DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
-# Adding Hashicorp and Node.js repo
-# Installing Terraform and npm (for Prettier)
-RUN KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg && \
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null && \
-    # Listing signing key
-    gpg --no-default-keyring --keyring "$KEYRING" --list-keys && \
-    echo "deb [signed-by=$KEYRING] \
-    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-    sudo tee /etc/apt/sources.list.d/hashicorp.list && \
-    # Node.js repo
-    curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - &&\
-    # Terraform and nodejs
-    sudo apt-get update -y &&\
-    sudo apt-get install -y --no-install-recommends terraform nodejs && \
-    sudo apt-get clean
-
-# Installing Terraform, prettier, yq, pre-commit, pre-commit-hooks, yamllint, ansible-core
-RUN sudo npm install --save-dev --save-exact prettier && \
-    ##npm install --global prettier && \
+    sudo npm install --save-dev --save-exact prettier
     # pip
-    sudo pip3 install --upgrade pip && \
-    # Installing pre-commit, pre-commit-hooks, yamllint, ansible-core && \
-    sudo pip install pre-commit pre-commit-hooks python-Levenshtein yamllint ansible-core
+    sudo pip3 install --upgrade pip
+    # Installing pre-commit, pre-commit-hooks, yamllint, ansible-core
+    sudo pip install \
+        pre-commit \
+        pre-commit-hooks \
+        python-Levenshtein \
+        yamllint \
+        ansible-core
+
+EOF
 
 # Installing SOPS and age for encrypting secrets
 # Installing yq, a command-line YAML, JSON and XML processor
