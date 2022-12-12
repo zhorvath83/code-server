@@ -181,6 +181,6 @@ VOLUME $CODER_HOME/.ssh
 ENTRYPOINT ["/usr/bin/entrypoint.sh",   \
             "--bind-addr",              \
             "0.0.0.0:8080",             \
-            "--disable-telemetry"       \
+            "--disable-telemetry",      \
             "${DEFAULT_WORKSPACE}"      \
 ]
