@@ -45,7 +45,7 @@ COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 RUN  <<EOF
     sudo apt-get update -y
-    sudo apt-get install --assume-yes --no-install-recommends wget curl
+    sudo apt-get install --assume-yes --no-install-recommends wget curl gnupg
     # Adding Hashicorp repo
     KEYRING=/usr/share/keyrings/hashicorp-archive-keyring.gpg
     wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
@@ -55,7 +55,7 @@ RUN  <<EOF
         sudo tee /etc/apt/sources.list.d/hashicorp.list
 
     # Adding Node.js repo
-    wget -qO- https://deb.nodesource.com/setup_12.x | sudo -E bash -
+    wget -qO- https://deb.nodesource.com/setup_19.x | sudo -E bash - 
 
     sudo apt-get update -y
     sudo apt-get install --assume-yes --no-install-recommends \
@@ -64,11 +64,8 @@ RUN  <<EOF
         nodejs \
         net-tools \
         iputils-ping \
-        wget \
-        curl \
         vim \
         jq \
-        gnupg \
         software-properties-common \
         python3 \
         python3-pip \
