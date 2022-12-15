@@ -154,7 +154,8 @@ RUN --mount=type=secret,id=USERNAME \
     	--install-extension redhat.vscode-yaml \
     	--install-extension esbenp.prettier-vscode \
     	--install-extension signageos.signageos-vscode-sops \
-    	--install-extension MichaelCurrin.auto-commit-msg
+    	--install-extension MichaelCurrin.auto-commit-msg \
+        --install-extension hashicorp.terraform
 
     # Cleaning up
     echo "[code-server] Dependency installation completed, cleaning up..."
