@@ -23,7 +23,7 @@ ARG GO_VERSION=1.19.4
 ENV CODER_HOME="/home/coder"
 ENV HOME=${CODER_HOME}
 ENV ENTRYPOINTD=${HOME}/entrypoint.d
-ENV DEFAULT_WORKSPACE=${HOME}/projects
+ENV DEFAULT_WORKSPACE=/projects
 
 # code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
