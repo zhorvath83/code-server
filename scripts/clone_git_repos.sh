@@ -20,5 +20,9 @@ for i in $(curl $curl_param "https://api.github.com/users/$gh_user/repos" | grep
   git -C ~/projects clone "$i"
 done
 
+# Installing pre-commit hook scripts for every repo
+find ~/projects -maxdepth 1 -type d -print0 | \
+    xargs -0 sh -c 'for dir; do pushd "$dir" && pre-commit install && popd; done'
+
 
 exit 0
