@@ -14,7 +14,7 @@ ARG YQ_VERSION=v4.30.5
 # renovate: datasource=github-releases depName=mozilla/sops
 ARG SOPS_VERSION=v3.7.3
 
-# renovate: datasource=github-releases depName=FiloSottile/age 
+# renovate: datasource=github-releases depName=FiloSottile/age
 ARG AGE_VERSION=v1.0.0
 
 # renovate: datasource=golang-version
@@ -53,7 +53,7 @@ RUN --mount=type=secret,id=USERNAME \
         sudo tee /etc/apt/sources.list.d/hashicorp.list
 
     # Adding Node.js repo
-    wget -qO- https://deb.nodesource.com/setup_19.x | sudo -E bash - 
+    wget -qO- https://deb.nodesource.com/setup_19.x | sudo -E bash -
 
     sudo apt-get update -y
     # Installing npm for Prettier, apache2-utils for generating htpasswd
@@ -99,7 +99,7 @@ RUN --mount=type=secret,id=USERNAME \
         yamllint \
         ansible-core
 
-    # Installing SOPS, a simple and flexible tool for managing secrets 
+    # Installing SOPS, a simple and flexible tool for managing secrets
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops
     sudo chmod +x /usr/local/bin/sops
 
@@ -148,14 +148,15 @@ RUN --mount=type=secret,id=USERNAME \
 
     # Installing vscode plugins
     HOME=${CODER_HOME} code-server \
-	--install-extension equinusocio.vsc-material-theme \
-	--install-extension PKief.material-icon-theme \
-    	--install-extension Rubymaniac.vscode-paste-and-indent \
-    	--install-extension redhat.vscode-yaml \
-    	--install-extension esbenp.prettier-vscode \
-    	--install-extension signageos.signageos-vscode-sops \
-    	--install-extension MichaelCurrin.auto-commit-msg \
-        --install-extension hashicorp.terraform
+        --install-extension equinusocio.vsc-material-theme \
+        --install-extension PKief.material-icon-theme \
+        --install-extension Rubymaniac.vscode-paste-and-indent \
+        --install-extension redhat.vscode-yaml \
+        --install-extension esbenp.prettier-vscode \
+        --install-extension signageos.signageos-vscode-sops \
+        --install-extension MichaelCurrin.auto-commit-msg \
+        --install-extension hashicorp.terraform \
+        --install-extension weaveworks.vscode-gitops-tools
 
     # Cleaning up
     echo "[code-server] Dependency installation completed, cleaning up..."
