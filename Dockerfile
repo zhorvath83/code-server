@@ -180,7 +180,9 @@ COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
 
-ENTRYPOINT ["/usr/bin/entrypoint.sh",   \
+# Executing in shell to invoke variable substitution
+ENTRYPOINT [ "sh", "-c",                \
+            "/usr/bin/entrypoint.sh",   \
             "--bind-addr",              \
             "0.0.0.0:8080",             \
             "--disable-telemetry",      \
