@@ -187,5 +187,4 @@ ENTRYPOINT ["/bin/bash", "-c",         \
             "/usr/bin/entrypoint.sh",  \
             "--bind-addr 0.0.0.0:8080",\
             "--disable-telemetry",     \
-            "${DEFAULT_WORKSPACE}"
-]
+            "${DEFAULT_WORKSPACE}"]
