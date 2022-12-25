@@ -183,4 +183,7 @@ VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
 
 # Executing in shell to invoke variable substitution
-ENTRYPOINT ["/bin/bash", "-c", "/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8080", "--disable-telemetry", "${DEFAULT_WORKSPACE}"]
+ENTRYPOINT /usr/bin/entrypoint.sh \
+            --bind-addr 0.0.0.0:8080 \
+            --disable-telemetry \
+            ${DEFAULT_WORKSPACE}
