@@ -36,7 +36,6 @@ ENV PATH=$PATH:/usr/local/go/bin
 RUN --mount=type=secret,id=USERNAME \
     --mount=type=secret,id=MAILADDRESS \
     <<EOF
-
     mkdir ${CODER_HOME}/projects
     mkdir ${CODER_HOME}/.ssh
     mkdir ${CODER_HOME}/entrypoint.d
@@ -127,10 +126,13 @@ RUN --mount=type=secret,id=USERNAME \
     # Installing go-task
     sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
 
-    # Kubectl
-    # curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl" && \
-    # sudo mv kubectl /usr/local/bin/kubectl && \
-    # sudo chmod +x /usr/local/bin/kubectl
+    # Installing Kubectl
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
+    sudo mv kubectl /usr/local/bin/kubectl
+    sudo chmod +x /usr/local/bin/kubectl
+
+    # Installing Flux CLI
+    curl -s https://fluxcd.io/install.sh | sudo bash
 
     # Git config
     # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
@@ -181,10 +183,9 @@ VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
 
 # Executing in shell to invoke variable substitution
-ENTRYPOINT [ "sh", "-c",                \
-            "/usr/bin/entrypoint.sh",   \
-            "--bind-addr",              \
-            "0.0.0.0:8080",             \
-            "--disable-telemetry",      \
-            "${DEFAULT_WORKSPACE}"      \
+ENTRYPOINT ["/bin/bash", "-c",         \
+            "/usr/bin/entrypoint.sh",  \
+            "--bind-addr 0.0.0.0:8080",\
+            "--disable-telemetry",     \
+            "${DEFAULT_WORKSPACE}"
 ]
