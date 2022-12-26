@@ -15,7 +15,7 @@ ARG YQ_VERSION=v4.30.5
 ARG SOPS_VERSION=v3.7.3
 
 # renovate: datasource=github-releases depName=FiloSottile/age
-ARG AGE_VERSION=v1.0.0
+ARG AGE_VERSION=v1.1.1
 
 # renovate: datasource=golang-version
 ARG GO_VERSION=1.19.4
