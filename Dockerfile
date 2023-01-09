@@ -96,7 +96,8 @@ RUN --mount=type=secret,id=USERNAME \
         pre-commit-hooks \
         python-Levenshtein \
         yamllint \
-        ansible-core
+        ansible-core \
+        sshpass
 
     # Installing SOPS, a simple and flexible tool for managing secrets
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops
