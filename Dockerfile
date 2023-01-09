@@ -55,7 +55,7 @@ RUN --mount=type=secret,id=USERNAME \
     wget -qO- https://deb.nodesource.com/setup_19.x | sudo -E bash -
 
     sudo apt-get update -y
-    # Installing npm for Prettier, apache2-utils for generating htpasswd
+    # Installing npm for Prettier, apache2-utils for generating htpasswd, sshpass for ansible,
     sudo apt-get install --assume-yes --no-install-recommends \
         terraform \
         nodejs \
@@ -72,7 +72,8 @@ RUN --mount=type=secret,id=USERNAME \
         unzip \
         bzr \
         git-extras \
-        apache2-utils
+        apache2-utils \
+        sshpass
 
     # Installing zsh
     curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
@@ -96,8 +97,7 @@ RUN --mount=type=secret,id=USERNAME \
         pre-commit-hooks \
         python-Levenshtein \
         yamllint \
-        ansible-core \
-        sshpass
+        ansible-core
 
     # Installing SOPS, a simple and flexible tool for managing secrets
     sudo wget -q "https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux" -O /usr/local/bin/sops
