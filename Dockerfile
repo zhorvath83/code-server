@@ -30,7 +30,7 @@ ENV DEFAULT_WORKSPACE=/projects
 ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery","cacheUrl": "https://vscode.blob.core.windows.net/gallery/index","itemUrl": "https://marketplace.visualstudio.com/items"}'
 
 ARG GOPATH=$CODER_HOME/go
-ENV PATH=$PATH:/usr/local/go/bin
+#ENV PATH=$PATH:/usr/local/go/bin
 
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
 RUN --mount=type=secret,id=USERNAME \
@@ -118,11 +118,14 @@ RUN --mount=type=secret,id=USERNAME \
         wget -q "https://golang.org/dl/${GOPKG}" -O /tmp/${GOPKG}
     sudo tar -C /usr/local -xzf "/tmp/${GOPKG}"
     mkdir -p "${GOPATH}"
-    go version
+    #go version
     echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile"
-    echo "export PATH=$GOPATH/bin:$PATH" | tee -a "$CODER_HOME/.profile"
-    echo "export PATH=$PATH:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile"
-    echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a "/etc/profile"
+    echo "export PATH=$PATH:$HOME/bin:$GOPATH/bin:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile"
+
+    # echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile"
+    # echo "export PATH=$GOPATH/bin:$PATH" | tee -a "$CODER_HOME/.profile"
+    # echo "export PATH=$PATH:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile"
+    # echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a "/etc/profile"
 
     # Installing go-task
     sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
