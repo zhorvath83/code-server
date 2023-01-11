@@ -120,7 +120,7 @@ RUN --mount=type=secret,id=USERNAME \
     mkdir -p "${GOPATH}"
     #go version
     echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile"
-    echo "export PATH=$PATH:$HOME/bin:$GOPATH/bin:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile"
+    echo "export PATH=$PATH:$HOME/bin:$HOME/.local/bin:$GOPATH/bin:/usr/local/go/bin" | tee -a "$CODER_HOME/.profile"
 
     # echo "export GOPATH=$GOPATH" | tee -a "$CODER_HOME/.profile"
     # echo "export PATH=$GOPATH/bin:$PATH" | tee -a "$CODER_HOME/.profile"
