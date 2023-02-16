@@ -21,7 +21,7 @@ jobs:
             shortreponame=$( echo ${{ github.repository }} | cut -d'/' -f 2 )
             echo "::set-output name=IMAGENAME::${shortreponame}"
       - name: Prune old GHCR images
-        uses: sondrelg/container-retention-policy@v1
+        uses: sondrelg/container-retention-policy@v2
         with:
           image-names: ${{ steps.image_name.outputs.IMAGENAME  }}
           cut-off: 8 weeks ago UTC
