@@ -78,6 +78,7 @@ RUN --mount=type=secret,id=USERNAME \
 
     # Configure SSH
     sudo mkdir /var/run/sshd
+    sudo ssh-keygen -A
     sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
     sudo sed -i "s/#Port 22/Port 2222/" /etc/ssh/sshd_config
 
