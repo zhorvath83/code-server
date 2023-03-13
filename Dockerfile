@@ -77,8 +77,9 @@ RUN --mount=type=secret,id=USERNAME \
         sshpass
 
     # Configure SSH
-    mkdir /var/run/sshd
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+    sudo mkdir /var/run/sshd
+    sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+    sudo sed -i "s/#Port 22/Port 2222/" /etc/ssh/sshd_config
 
     # Installing zsh
     curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
@@ -184,6 +185,7 @@ COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/s
 # COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
+COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
 COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 #WORKDIR ${HOME}/projects
@@ -195,5 +197,5 @@ VOLUME $CODER_HOME/.ssh
 ENTRYPOINT /usr/bin/entrypoint.sh \
             --bind-addr 0.0.0.0:8080 \
             --disable-telemetry \
-            --auth none \
+            --auth password \
             ${DEFAULT_WORKSPACE}
