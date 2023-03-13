@@ -73,7 +73,12 @@ RUN --mount=type=secret,id=USERNAME \
         bzr \
         git-extras \
         apache2-utils \
+        openssh-server \
         sshpass
+
+    # Configure SSH
+    mkdir /var/run/sshd
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 
     # Installing zsh
     curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
@@ -190,4 +195,5 @@ VOLUME $CODER_HOME/.ssh
 ENTRYPOINT /usr/bin/entrypoint.sh \
             --bind-addr 0.0.0.0:8080 \
             --disable-telemetry \
+            --auth none \
             ${DEFAULT_WORKSPACE}
