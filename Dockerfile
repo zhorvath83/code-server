@@ -193,6 +193,8 @@ COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 VOLUME $CODER_HOME/projects
 VOLUME $CODER_HOME/.ssh
 
+EXPOSE 2222
+
 # Executing in shell to invoke variable substitution
 ENTRYPOINT /usr/bin/entrypoint.sh \
             --bind-addr 0.0.0.0:8080 \
