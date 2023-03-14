@@ -32,15 +32,6 @@ ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_ap
 ARG GOPATH=$CODER_HOME/go
 #ENV PATH=$PATH:/usr/local/go/bin
 
-COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
-# COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
-COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
-COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
-COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
-COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
-COPY --chown=coder:coder --chmod=600 config/sshd/sshd-1.service /etc/systemd/system/sshd-1.service
-
-
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
 RUN --mount=type=secret,id=USERNAME \
     --mount=type=secret,id=MAILADDRESS \
@@ -85,28 +76,11 @@ RUN --mount=type=secret,id=USERNAME \
         openssh-server \
         sshpass
 
-    # Configure SSHD
-    # sudo mkdir /var/run/sshd
-    sudo mkdir /opt/ssh
-
-    sudo cp /etc/ssh/sshd_config /opt/ssh/
-    sudo ssh-keygen -q -N "" -t dsa -f /opt/ssh/ssh_host_dsa_key
-    sudo ssh-keygen -q -N "" -t rsa -b 4096 -f /opt/ssh/ssh_host_rsa_key
-    sudo ssh-keygen -q -N "" -t ecdsa -f /opt/ssh/ssh_host_ecdsa_key
-    sudo ssh-keygen -q -N "" -t ed25519 -f /opt/ssh/ssh_host_ed25519_key
-
-    sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /opt/ssh/sshd_config
-    sudo sed -i "s/#Port 22/Port 2222/" /opt/ssh/sshd_config
-    echo "HostKey /opt/ssh/ssh_host_rsa_key" | tee -a /opt/ssh/sshd_config
-    echo "HostKey /opt/ssh/ssh_host_ecdsa_key" | tee -a /opt/ssh/sshd_config
-    echo "HostKey /opt/ssh/ssh_host_ed25519_key" | tee -a /opt/ssh/sshd_config
-    echo "LogLevel DEBUG3" | tee -a /opt/ssh/sshd_config
-    echo "PidFile /opt/ssh/sshd.pid" | tee -a /opt/ssh/sshd_config
-
-    sudo chmod 600 /opt/ssh/*
-    sudo chmod 644 /opt/ssh/sshd_config
-    sudo chown -R coder. /opt/ssh/
-    sudo chown coder:coder /etc/systemd/system/sshd-1.service
+    # Configure SSH
+    sudo mkdir /var/run/sshd
+    sudo ssh-keygen -A
+    sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+    sudo sed -i "s/#Port 22/Port 2222/" /etc/ssh/sshd_config
 
     # Installing zsh
     curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
@@ -207,6 +181,13 @@ RUN --mount=type=secret,id=USERNAME \
     echo "[code-server] Cleanup done"
 
 EOF
+
+COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
+# COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
+COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
+COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
+COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
+COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 
 #WORKDIR ${HOME}/projects
 
