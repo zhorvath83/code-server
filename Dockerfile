@@ -40,7 +40,7 @@ COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/c
 COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 COPY --chown=coder:coder --chmod=600 config/supervisord/supervisord.conf /etc/supervisord.conf
 COPY --chown=coder:coder --chmod=600 config/supervisord/sshd.conf /etc/supervisord.d/sshd.conf
-COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
+# COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
 
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
 RUN --mount=type=secret,id=USERNAME \
@@ -218,8 +218,5 @@ VOLUME $CODER_HOME/.ssh
 EXPOSE 2222
 
 # Executing in shell to invoke variable substitution
-ENTRYPOINT /usr/bin/entrypoint.sh \
-            --bind-addr 0.0.0.0:8080 \
-            --disable-telemetry \
-            --auth password \
-            ${DEFAULT_WORKSPACE}
+ENTRYPOINT supervisord -c /etc/supervisord.conf
+
