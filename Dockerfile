@@ -32,14 +32,15 @@ ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_ap
 ARG GOPATH=$CODER_HOME/go
 #ENV PATH=$PATH:/usr/local/go/bin
 
+RUN mkdir /etc/supervisord.d
 COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 # COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
-COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
 COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
-COPY --chown=coder:coder --chmod=600 config/sshd/sshd-1.service /etc/systemd/system/sshd-1.service
-
+COPY --chown=coder:coder --chmod=600 config/supervisord/supervisord.conf /etc/supervisord.conf
+COPY --chown=coder:coder --chmod=600 config/supervisord/sshd.conf /etc/supervisord.d/sshd.conf
+COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
 
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
 RUN --mount=type=secret,id=USERNAME \
@@ -106,7 +107,6 @@ RUN --mount=type=secret,id=USERNAME \
     sudo chmod 600 /opt/ssh/*
     sudo chmod 644 /opt/ssh/sshd_config
     sudo chown -R coder. /opt/ssh/
-    sudo chown coder:coder /etc/systemd/system/sshd-1.service
 
     # Installing zsh
     curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
@@ -126,6 +126,8 @@ RUN --mount=type=secret,id=USERNAME \
 
     # Installing pre-commit, pre-commit-hooks, yamllint, ansible-core
     sudo pip install \
+        supervisor \
+        supervisord-dependent-startup \
         pre-commit \
         pre-commit-hooks \
         python-Levenshtein \

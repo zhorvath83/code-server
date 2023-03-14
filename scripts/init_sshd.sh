@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/usr/sbin/sshd -D
+supervisord -c /etc/supervisord.conf
