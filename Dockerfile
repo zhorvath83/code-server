@@ -32,7 +32,7 @@ ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_ap
 ARG GOPATH=$CODER_HOME/go
 #ENV PATH=$PATH:/usr/local/go/bin
 
-RUN mkdir /etc/supervisord.d
+RUN sudo mkdir /etc/supervisord.d
 COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 # COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
@@ -96,17 +96,17 @@ RUN --mount=type=secret,id=USERNAME \
     sudo ssh-keygen -q -N "" -t ecdsa -f /opt/ssh/ssh_host_ecdsa_key
     sudo ssh-keygen -q -N "" -t ed25519 -f /opt/ssh/ssh_host_ed25519_key
 
-    sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /opt/ssh/sshd_config
-    sudo sed -i "s/#Port 22/Port 2222/" /opt/ssh/sshd_config
+    sudo chmod 600 /opt/ssh/*
+    sudo chmod 644 /opt/ssh/sshd_config
+    sudo chown -R coder. /opt/ssh/
+
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /opt/ssh/sshd_config
+    sed -i "s/#Port 22/Port 2222/" /opt/ssh/sshd_config
     echo "HostKey /opt/ssh/ssh_host_rsa_key" | tee -a /opt/ssh/sshd_config
     echo "HostKey /opt/ssh/ssh_host_ecdsa_key" | tee -a /opt/ssh/sshd_config
     echo "HostKey /opt/ssh/ssh_host_ed25519_key" | tee -a /opt/ssh/sshd_config
     echo "LogLevel DEBUG3" | tee -a /opt/ssh/sshd_config
     echo "PidFile /opt/ssh/sshd.pid" | tee -a /opt/ssh/sshd_config
-
-    sudo chmod 600 /opt/ssh/*
-    sudo chmod 644 /opt/ssh/sshd_config
-    sudo chown -R coder. /opt/ssh/
 
     # Installing zsh
     curl -o- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh >> ~/oh_my_zsh.sh
