@@ -23,7 +23,6 @@ ARG GO_VERSION=1.19.4
 ENV CODER_HOME="/home/coder"
 ENV HOME=${CODER_HOME}
 ENV ENTRYPOINTD=${HOME}/entrypoint.d
-ENV DEFAULT_WORKSPACE=/projects
 
 # code-server uses the Open-VSX extension gallery( https://open-vsx.org/ )
 # https://github.com/coder/code-server/blob/main/docs/FAQ.md#how-do-i-use-my-own-extensions-marketplace
@@ -32,16 +31,12 @@ ENV EXTENSIONS_GALLERY='{"serviceUrl": "https://marketplace.visualstudio.com/_ap
 ARG GOPATH=$CODER_HOME/go
 #ENV PATH=$PATH:/usr/local/go/bin
 
-RUN sudo mkdir /etc/supervisord.d
 COPY --chown=coder:coder config/code-server/settings.json ${CODER_HOME}/.local/share/code-server/User/settings.json
 # COPY --chown=coder:coder config/code-server/coder.json ${CODER_HOME}/.local/share/code-server/coder.json
 COPY --chown=coder:coder config/mc/ini ${CODER_HOME}/.config/mc/ini
 COPY --chown=coder:coder scripts/clone_git_repos.sh ${CODER_HOME}/entrypoint.d/clone_git_repos.sh
 COPY --chown=coder:coder --chmod=600 config/ssh/config ${CODER_HOME}/.ssh/config
 COPY --chown=coder:coder --chmod=600 config/supervisord/supervisord.conf /etc/supervisord.conf
-COPY --chown=coder:coder --chmod=600 config/supervisord/sshd.conf /etc/supervisord.d/sshd.conf
-COPY --chown=coder:coder --chmod=600 config/supervisord/code-server.conf /etc/supervisord.d/code-server.conf
-# COPY --chown=coder:coder scripts/init_sshd.sh ${CODER_HOME}/entrypoint.d/init_sshd.sh
 
 # https://andrei-calazans.com/posts/2021-06-23/passing-secrets-github-actions-docker
 RUN --mount=type=secret,id=USERNAME \
@@ -220,4 +215,3 @@ EXPOSE 2222
 
 # Executing in shell to invoke variable substitution
 ENTRYPOINT supervisord -c /etc/supervisord.conf
-
