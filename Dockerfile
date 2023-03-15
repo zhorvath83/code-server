@@ -96,6 +96,7 @@ RUN --mount=type=secret,id=USERNAME \
     sudo chmod 644 /opt/ssh/sshd_config
     sudo chown -R coder. /opt/ssh/
 
+    sed -i 's/#AllowAgentForwarding yes/AllowAgentForwarding yes/' /opt/ssh/sshd_config
     sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /opt/ssh/sshd_config
     sed -i "s/#Port 22/Port 2222/" /opt/ssh/sshd_config
     echo "HostKey /opt/ssh/ssh_host_rsa_key" | tee -a /opt/ssh/sshd_config
