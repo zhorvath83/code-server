@@ -12,7 +12,7 @@ ARG ARCH=amd64
 ARG YQ_VERSION=v4.33.1
 
 # renovate: datasource=github-releases depName=mozilla/sops
-ARG SOPS_VERSION=v3.7.3
+ARG SOPS_VERSION=v3.8.1
 
 # renovate: datasource=github-releases depName=FiloSottile/age
 ARG AGE_VERSION=v1.1.1
