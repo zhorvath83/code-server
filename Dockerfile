@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1.4
+# syntax = docker/dockerfile:1.7
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/reference.md
 FROM codercom/code-server:4.11.0 AS code-server
 
